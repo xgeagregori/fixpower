@@ -6,6 +6,6 @@ client = TestClient(app)
 
 
 def test_read_main():
-    response = client.get("/users")
+    response = client.get("/product-listings")
     assert response.status_code == 200
-    assert response.json() == {"message": "Welcome to the User Service!"}
+    assert response.json() == {"message": "Welcome to the Product Listing Service!"}

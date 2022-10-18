@@ -3,6 +3,6 @@ from fastapi import FastAPI
 app = FastAPI()
 
 
-@app.get("/users")
+@app.get("/product-listings")
 async def root():
-    return {"message": "Welcome to the User Service!"}
+    return {"message": "Welcome to the Product Listings Service!"}
