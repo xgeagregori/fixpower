@@ -1,8 +1,24 @@
 from fastapi import FastAPI
+from mangum import Mangum
 
-app = FastAPI()
+from fastapi_utils.inferring_router import InferringRouter
+from fastapi_utils.cbv import cbv
+
+app = FastAPI(
+    root_path="/prod/user-api/v1",
+    title="User API",
+    version="1.0.0",
+)
+handler = Mangum(app, api_gateway_base_path="/user-api/v1")
+router = InferringRouter()
 
 
-@app.get("/users")
-async def root():
-    return {"message": "Welcome to the User Service!"}
+@cbv(router)
+class UserController:
+    @app.get("/users")
+    def get_users():
+        """Get users."""
+        return {"message": "Welcome to the User Service!"}
+
+
+app.include_router(router)

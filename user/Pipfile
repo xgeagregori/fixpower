@@ -8,6 +8,8 @@ fastapi = "*"
 uvicorn = {extras = ["standard"], version = "*"}
 requests = "*"
 pytest = "*"
+mangum = "*"
+fastapi-utils = "*"
 
 [dev-packages]
 
