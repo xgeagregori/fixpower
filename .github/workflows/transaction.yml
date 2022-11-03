@@ -1,0 +1,90 @@
+name: CI/CD Pipeline - Transaction
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - "transaction/**"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./transaction
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python 3.9
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.9.13
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pipenv
+          pipenv install
+      - name: Zip files and packages
+        run: |
+          SITE_PACKAGES=$(pipenv --venv)/lib/python3.9/site-packages
+          DIR=$(pwd)/..
+          mkdir -p $DIR/transaction/python
+          cd $SITE_PACKAGES
+          cp -r * $DIR/transaction/python
+          cd $DIR/transaction
+          zip -FSr9 $DIR/infra/transaction-layer.zip python
+          cd $DIR/transaction
+          zip -FSr9 $DIR/infra/transaction.zip app
+      - name: Upload layer zip file artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: transaction-layer
+          path: infra/transaction-layer.zip
+      - name: Upload function zip file artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: transaction
+          path: infra/transaction.zip
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    defaults:
+      run:
+        working-directory: ./infra
+    steps:
+      - uses: actions/checkout@v3
+      - name: Download layer zip file artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: transaction-layer
+      - name: Download function zip file artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: transaction
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+      - name: Deploy stack
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_TRANSACTION_LAMBDA_ARN: ${{ secrets.AWS_TRANSACTION_LAMBDA_ARN }}
+          AWS_TRANSACTION_TABLE_NAME: ${{ secrets.AWS_TRANSACTION_TABLE_NAME }}
+        run: |
+          npm install -g aws-cdk
+          npm install
+          cd ..
+          mv -f transaction.zip infra/transaction.zip
+          mv -f transaction-layer.zip infra/transaction-layer.zip
+          cd infra
+          aws lambda update-function-code --function-name $AWS_TRANSACTION_LAMBDA_ARN --zip-file fileb://transaction.zip
+          aws lambda publish-layer-version --layer-name transaction --zip-file fileb://transaction-layer.zip
+          LAYER_ARN=$(aws lambda list-layer-versions --layer-name transaction --query 'LayerVersions[0].LayerVersionArn' --output text)
+          aws lambda update-function-configuration --function-name $AWS_TRANSACTION_LAMBDA_ARN --layers $LAYER_ARN --handler app.transaction_controller.handler --environment Variables={AWS_ACCESS_KEY_ID_LAMBDA=$AWS_ACCESS_KEY_ID,AWS_SECRET_ACCESS_KEY_LAMBDA=$AWS_SECRET_ACCESS_KEY,AWS_TRANSACTION_TABLE_NAME=$AWS_TRANSACTION_TABLE_NAME}
