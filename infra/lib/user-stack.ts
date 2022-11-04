@@ -21,6 +21,17 @@ export class UserStack extends cdk.Stack {
       removalPolicy: cdk.RemovalPolicy.DESTROY,
     });
 
+    userTable.addGlobalSecondaryIndex({
+      indexName: "username",
+      partitionKey: {
+        name: "username",
+        type: dynamodb.AttributeType.STRING,
+      },
+      readCapacity: 1,
+      writeCapacity: 1,
+      projectionType: dynamodb.ProjectionType.ALL,
+    });
+
     const userLambda = new lambda.Function(this, "userApi", {
       runtime: lambda.Runtime.PYTHON_3_9,
       code: lambda.Code.fromAsset("../user/app"),
