@@ -5,7 +5,7 @@ from fastapi_utils.inferring_router import InferringRouter
 from fastapi_utils.cbv import cbv
 
 app = FastAPI(
-    root_path="/prod/transaction-api/v1",
+    ##root_path="/prod/transaction-api/v1",
     title="Transaction API",
     version="1.0.0",
 )
@@ -19,6 +19,12 @@ class TransactionController:
     def get_transactions():
         """Get transactions."""
         return {"message": "Welcome to the Transaction Service!!!"}
-
+    
+    
+    
+    @app.post("/transactions")
+    def create_trasaction():
+        """Create a new transaction"""
+        return {"message": "Create transaction"}
 
 app.include_router(router)
