@@ -20,7 +20,7 @@ class UserIndex(GlobalSecondaryIndex):
 
 class User(Model):
     class Meta:
-        table_name = settings.AWS_USER_TABLE_NAME
+        table_name = os.getenv("AWS_USER_TABLE_NAME")
         aws_access_key_id = os.getenv("AWS_ACCESS_KEY_ID_LAMBDA")
         aws_secret_access_key = os.getenv("AWS_SECRET_ACCESS_KEY_LAMBDA")
 
