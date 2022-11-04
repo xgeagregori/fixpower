@@ -10,6 +10,10 @@ requests = "*"
 pytest = "*"
 mangum = "*"
 fastapi-utils = "*"
+python-multipart = "*"
+python-jose = {extras = ["cryptography"], version = "*"}
+passlib = {extras = ["bcrypt"], version = "*"}
+pynamodb = "*"
 
 [dev-packages]
 
