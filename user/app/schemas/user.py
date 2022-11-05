@@ -3,13 +3,19 @@ from typing import Optional
 
 
 class UserBase(BaseModel):
-    id: Optional[str]
     username: str
     email: str
 
 
 class UserCreate(UserBase):
+    id: Optional[str]
     password: str
+
+
+class UserUpdate(BaseModel):
+    username: Optional[str]
+    email: Optional[str]
+    password: Optional[str]
 
 
 class UserInDB(UserBase):
