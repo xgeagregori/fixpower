@@ -24,5 +24,5 @@ class ProductListing(Model):
         aws_secret_access_key = os.getenv("AWS_SECRET_ACCESS_KEY_LAMBDA")
 
     id = UnicodeAttribute(hash_key=True)
-    listed_price = NumberAttribute(bool=True)
+    listed_price = NumberAttribute()
     productListing_index = ProductListingIndex()

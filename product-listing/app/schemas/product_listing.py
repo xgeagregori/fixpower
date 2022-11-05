@@ -8,3 +8,6 @@ class ProductListingBase(BaseModel):
 
 class ProductListingCreate(ProductListingBase):
     pass
+
+class ProductListingUpdate(ProductListingBase):
+    pass
