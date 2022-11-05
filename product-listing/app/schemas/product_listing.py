@@ -3,7 +3,7 @@ from typing import Optional
 
 class ProductListingBase(BaseModel):
     id: Optional[str]
-    listed_price: str
+    listed_price: float
 
 
 class ProductListingCreate(ProductListingBase):

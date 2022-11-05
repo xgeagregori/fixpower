@@ -41,8 +41,8 @@ class ProductListingController:
         return {"id" : product_listing_id}
 
     @app.patch("/product-listings/{product_listing_id}")
-    def upadte_product_listing_by_id(product_listing_id: str, c: ProductListingUpdate, self=Depends(ProductListingDep)):
-        product_listing = self.product_listing_service.update_product_listing_by_id(product_listing_id, product_listing_id)
+    def upadte_product_listing_by_id(product_listing_id: str, product_listing: ProductListingUpdate, self=Depends(ProductListingDep)):
+        product_listing = self.product_listing_service.update_product_listing_by_id(product_listing_id, product_listing)
         return product_listing.attribute_values
 
     @app.delete("/product-listings/{product_listing_id}")
