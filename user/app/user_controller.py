@@ -14,7 +14,7 @@ from app.dependencies.user import UserDep
 from app.schemas.user import UserBase, UserCreate, UserUpdate
 
 app = FastAPI(
-    # root_path="/prod/user-api/v1",
+    root_path="/prod/user-api/v1",
     title="User API",
     version="1.0.0",
 )
@@ -42,9 +42,9 @@ class UserController:
         return {"access_token": access_token, "token_type": "bearer"}
 
     @app.post("/register", status_code=status.HTTP_201_CREATED)
-    def register(user: UserCreate, self=Depends(UserDep)):
+    def register(user_create: UserCreate, self=Depends(UserDep)):
         """Register user"""
-        user_id = self.user_service.create_user(user)
+        user_id = self.user_service.create_user(user_create)
         if user_id is None:
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
