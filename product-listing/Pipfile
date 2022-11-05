@@ -10,6 +10,8 @@ pytest = "*"
 requests = "*"
 mangum = "*"
 fastapi-utils = "*"
+pynamodb = "*"
+passlib = "*"
 
 [dev-packages]
 
