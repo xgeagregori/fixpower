@@ -44,13 +44,9 @@ class TestSuiteTransactionCRUD:
         assert response.json() == {"detail": "Transaction not found"}
 
     def test_delete_transaction_by_id(self):
-            response = client.delete("/transactions/testID")
-            assert response.status_code == 200
-            assert response.json()["id"] == "testID"
-        
-           
-                
-        
+        response = client.delete("/transactions/testID")
+        assert response.status_code == 200
+        assert response.json()["id"] == "testID"
 
     def test_delete_transaction_not_found(self):
         response = client.delete("/transactions/testIDNotFound")

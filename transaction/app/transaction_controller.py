@@ -38,7 +38,6 @@ class TransactionController:
         """Get transaction by id."""
         transaction = self.transaction_service.get_transaction_by_id(transaction_id)
         # return transaction
-
         return {"id": transaction.id, **transaction.attribute_values}
 
     @app.delete("/transactions/{transaction_id}")
