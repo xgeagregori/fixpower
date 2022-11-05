@@ -19,6 +19,25 @@ class ProductListingServiceImpl(Product_listingService):
         return product_listing.id
 
 
-    def get_product_listing_by_product_id(self, id: str):
+    def get_product_listing_by_id(self, id: str):
+        try:
+            return ProductListing.get(id)
+        except ProductListing.DoesNotExist:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Product not found",
+            )
+    
+    def update_product_listing_by_id(self, id:str, product_listing_update: ProductListingCreate):
+        product_listing = self.get_product_listing_by_id(id)
+        for key, value in product_listing_update.dict().items():
+            if value:
+                setattr(product_listing, key, value)
         
-        return "hello world"
+        product_listing.save()
+        return product_listing
+
+    def delete_product_listing_by_id(self, id:str):
+        product_listing = self.get_product_listing_by_id(id)
+        product_listing.delete()
+        return id

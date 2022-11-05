@@ -7,5 +7,13 @@ class Product_listingService(ABC):
         pass
 
     @abstractmethod
-    def get_product_listing_by_product_id(self, product_listingname):
+    def get_product_listing_by_id(self, id):
+        pass
+    
+    @abstractmethod
+    def update_product_listing_by_id(self, id, product_listing):
+        pass
+
+    @abstractmethod
+    def delete_product_listing_by_id(self, id):
         pass
