@@ -47,7 +47,7 @@ class TransactionController:
         transaction_id = self.transaction_service.delete_transaction_by_id(
             transaction_id
         )
-        
+
         return {"id": transaction_id}
 
 
