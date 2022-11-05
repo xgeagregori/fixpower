@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Depends, status
+from fastapi import FastAPI, Depends, status, HTTPException
 from mangum import Mangum
 
 from fastapi_utils.inferring_router import InferringRouter
@@ -20,14 +20,10 @@ router = InferringRouter()
 
 @cbv(router)
 class TransactionController:
-    @app.get("/transactions")
-    def get_transactions():
-        """Get transactions."""
-        return {"message": "Welcome to the Transaction Service!!!"}
-    
-    
     @app.post("/transactions", status_code=status.HTTP_201_CREATED)
-    def create_transaction(transaction_create: TransactionCreate, self=Depends(TransactionDep)):
+    def create_transaction(
+        transaction_create: TransactionCreate, self=Depends(TransactionDep)
+    ):
         """Create transaction."""
         transaction_id = self.transaction_service.create_transaction(transaction_create)
         if transaction_id is None:
@@ -36,5 +32,23 @@ class TransactionController:
                 detail="Transaction not created",
             )
         return {"id": transaction_id}
+
+    @app.get("/transactions/{transaction_id}")
+    def get_transaction_by_id(transaction_id: str, self=Depends(TransactionDep)):
+        """Get transaction by id."""
+        transaction = self.transaction_service.get_transaction_by_id(transaction_id)
+        # return transaction
+
+        return {"id": transaction.id, **transaction.attribute_values}
+
+    @app.delete("/transactions/{transaction_id}")
+    def delete_transaction_by_id(transaction_id: str, self=Depends(TransactionDep)):
+        """Delete transaction by id."""
+        transaction_id = self.transaction_service.delete_transaction_by_id(
+            transaction_id
+        )
+        
+        return {"id": transaction_id}
+
 
 app.include_router(router)
