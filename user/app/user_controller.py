@@ -1,10 +1,9 @@
 from fastapi import FastAPI, Depends, HTTPException, status
 from mangum import Mangum
 
+from fastapi.security import OAuth2PasswordRequestForm
 from fastapi_utils.inferring_router import InferringRouter
 from fastapi_utils.cbv import cbv
-
-from fastapi.security import OAuth2PasswordRequestForm
 
 from app.dependencies.auth import (
     authenticate_user,
@@ -12,10 +11,10 @@ from app.dependencies.auth import (
     get_current_user,
 )
 from app.dependencies.user import UserDep
-from app.schemas.user import UserBase, UserCreate
+from app.schemas.user import UserBase, UserCreate, UserUpdate
 
 app = FastAPI(
-    root_path="/prod/user-api/v1",
+    # root_path="/prod/user-api/v1",
     title="User API",
     version="1.0.0",
 )
@@ -29,6 +28,7 @@ class UserController:
     async def login(
         form_data: OAuth2PasswordRequestForm = Depends(), self=Depends(UserDep)
     ):
+        """Authenticate user and return access token"""
         user = authenticate_user(
             self.user_service, form_data.username, form_data.password
         )
@@ -43,7 +43,7 @@ class UserController:
 
     @app.post("/register", status_code=status.HTTP_201_CREATED)
     def register(user: UserCreate, self=Depends(UserDep)):
-        """Register user."""
+        """Register user"""
         user_id = self.user_service.create_user(user)
         if user_id is None:
             raise HTTPException(
@@ -52,10 +52,34 @@ class UserController:
             )
         return {"id": user_id}
 
+    @app.get("/users")
+    def get_users(self=Depends(UserDep)):
+        """Get all users"""
+        users = self.user_service.get_users()
+        return [user.attribute_values for user in users]
+
     @app.get("/users/me")
     def get_users(current_user: UserBase = Depends(get_current_user)):
         """Get authenticated user"""
         return current_user.attribute_values
+
+    @app.get("/users/{user_id}")
+    def get_user_by_id(user_id: str, self=Depends(UserDep)):
+        """Get user by id"""
+        user = self.user_service.get_user_by_id(user_id)
+        return user.attribute_values
+
+    @app.patch("/users/{user_id}")
+    def update_user_by_id(user_id, user_update: UserUpdate, self=Depends(UserDep)):
+        """Update user by id"""
+        user = self.user_service.update_user_by_id(user_id, user_update)
+        return user.attribute_values
+
+    @app.delete("/users/{user_id}")
+    def delete_user_by_id(user_id: str, self=Depends(UserDep)):
+        """Delete user by id"""
+        user_id = self.user_service.delete_user_by_id(user_id)
+        return {"id": user_id}
 
 
 app.include_router(router)
