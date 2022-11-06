@@ -32,13 +32,12 @@ class TransactionController:
                 detail="Transaction not created",
             )
         return {"id": transaction_id}
-    
+
     @app.get("/transactions")
     def get_transactions(self=Depends(TransactionDep)):
         """Get all transactions"""
-        transactions=self.transaction_service.get_transactions()
+        transactions = self.transaction_service.get_transactions()
         return [transactions.attribute_values for transactions in transactions]
-
 
     @app.get("/transactions/{transaction_id}")
     def get_transaction_by_id(transaction_id: str, self=Depends(TransactionDep)):

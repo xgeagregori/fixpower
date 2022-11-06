@@ -30,14 +30,13 @@ class TransactionServiceImpl(TransactionService):
         transaction = Transaction(**transaction_create.dict())
         transaction.save()
         return transaction.id
-    
+
     def get_transactions(self):
         try:
             return Transaction.scan()
         except Transaction.ScanError:
             raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="No Transaction found",
+                status_code=status.HTTP_404_NOT_FOUND, detail="No Transaction found",
             )
 
     def get_transaction_by_id(self, transaction_id: str):
