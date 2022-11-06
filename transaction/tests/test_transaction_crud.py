@@ -30,8 +30,13 @@ class TestSuiteTransactionCRUD:
         )
         assert response.status_code == 400
         assert response.json() == {"detail": "Transaction already exists"}
+    
+    def test_get_transactions(self):
+        response = client.get("/transactions")
+        assert response.status_code == 200
+        #assert len(response.json()) >= 2
 
-    def test_get_transactions_by_id(self):
+    def test_get_transaction_by_id(self):
         response = client.get("/transactions/testID")
         assert response.status_code == 200
         assert response.json()["id"] == "testID"
