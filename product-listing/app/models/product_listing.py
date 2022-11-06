@@ -4,8 +4,6 @@ from pynamodb.attributes import UnicodeAttribute, NumberAttribute
 import os
 
 
-
-
 class ProductListingIndex(GlobalSecondaryIndex):
     class Meta:
         index_name = "username"
@@ -14,7 +12,6 @@ class ProductListingIndex(GlobalSecondaryIndex):
         projection = AllProjection()
 
     username = UnicodeAttribute(hash_key=True)
-
 
 
 class ProductListing(Model):
