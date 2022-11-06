@@ -20,11 +20,11 @@ router = InferringRouter()
 class ProductListingController:
     @app.post("/product-listings", status_code=status.HTTP_201_CREATED)
     def create_product_listing(
-        product_listing: ProductListingCreate, self=Depends(ProductListingDep)
+        product_listing_create: ProductListingCreate, self=Depends(ProductListingDep)
     ):
         """Create product listing"""
         product_listing_id = self.product_listing_service.create_product_listing(
-            product_listing
+            product_listing_create
         )
         if product_listing_id is None:
             raise HTTPException(
@@ -53,12 +53,12 @@ class ProductListingController:
     @app.patch("/product-listings/{product_listing_id}")
     def update_product_listing_by_id(
         product_listing_id: str,
-        product_listing: ProductListingUpdate,
+        product_listing_update: ProductListingUpdate,
         self=Depends(ProductListingDep),
     ):
         """Update product listing by id"""
         product_listing = self.product_listing_service.update_product_listing_by_id(
-            product_listing_id, product_listing
+            product_listing_id, product_listing_update
         )
         return product_listing.attribute_values
 
