@@ -7,6 +7,10 @@ class ProductListingService(ABC):
         pass
 
     @abstractmethod
+    def get_product_listings(self):
+        pass
+
+    @abstractmethod
     def get_product_listing_by_id(self, id):
         pass
 

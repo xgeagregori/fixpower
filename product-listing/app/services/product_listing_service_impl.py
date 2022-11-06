@@ -33,6 +33,15 @@ class ProductListingServiceImpl(ProductListingService):
         product_listing.save()
         return product_listing.id
 
+    def get_product_listings(self):
+        try:
+            return ProductListing.scan()
+        except ProductListing.ScanError:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="No product listings found",
+            )
+
     def get_product_listing_by_id(self, id: str):
         try:
             return ProductListing.get(id)

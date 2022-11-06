@@ -34,6 +34,12 @@ class ProductListingController:
 
         return {"id": product_listing_id}
 
+    @app.get("/product-listings")
+    def get_users(self=Depends(ProductListingDep)):
+        """Get all product listings"""
+        product_listings = self.product_listing_service.get_product_listings()
+        return [product_listing.attribute_values for product_listing in product_listings]
+
     @app.get("/product-listings/{product_listing_id}")
     def get_product_listing_by_id(
         product_listing_id: str, self=Depends(ProductListingDep)
