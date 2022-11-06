@@ -8,7 +8,7 @@ from app.dependencies.product_listing import ProductListingDep
 from app.schemas.product_listing import ProductListingCreate, ProductListingUpdate
 
 app = FastAPI(
-    # root_path="/prod/product-listing-api/v1",
+    root_path="/prod/product-listing-api/v1",
     title="Product Listing API",
     version="1.0.0",
 )
