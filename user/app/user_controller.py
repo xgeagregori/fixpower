@@ -15,7 +15,7 @@ from app.schemas.user import UserBase, UserCreate, UserUpdate
 from app.schemas.notification import NotificationCreate, NotificationUpdate
 
 app = FastAPI(
-    # root_path="/prod/user-api/v1",
+    root_path="/prod/user-api/v1",
     title="User API",
     version="1.0.0",
 )
