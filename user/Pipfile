@@ -12,9 +12,8 @@ mangum = "*"
 fastapi-utils = "*"
 python-multipart = "*"
 python-jose = {extras = ["cryptography"], version = "*"}
-passlib = {extras = ["bcrypt"], version = "*"}
+passlib = {extras = ["argon2"], version = "*"}
 pynamodb = "*"
-bcrypt = "*"
 
 [dev-packages]
 
