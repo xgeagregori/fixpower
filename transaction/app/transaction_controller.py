@@ -5,7 +5,7 @@ from fastapi_utils.inferring_router import InferringRouter
 from fastapi_utils.cbv import cbv
 
 from app.dependencies.transaction import TransactionDep
-from app.schemas.transaction import TransactionCreate
+from app.schemas.transaction import TransactionCreate, TransactionUpdate
 from app.services.transaction_service import TransactionService
 from app.services.transaction_service_impl import TransactionServiceImpl
 
@@ -39,6 +39,18 @@ class TransactionController:
         transaction = self.transaction_service.get_transaction_by_id(transaction_id)
         # return transaction
         return {"id": transaction.id, **transaction.attribute_values}
+
+    @app.patch("/transactions/{transaction_id}")
+    def update_transaction_by_id(
+        transaction_id: str,
+        transaction_update: TransactionUpdate,
+        self=Depends(TransactionDep),
+    ):
+        """Update transaction by id"""
+        transaction = self.transaction_service.update_transaction_by_id(
+            transaction_id, transaction_update
+        )
+        return transaction.attribute_values
 
     @app.delete("/transactions/{transaction_id}")
     def delete_transaction_by_id(transaction_id: str, self=Depends(TransactionDep)):

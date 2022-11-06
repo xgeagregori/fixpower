@@ -2,7 +2,7 @@ from fastapi import HTTPException, status
 from pynamodb.exceptions import DoesNotExist, DeleteError
 
 from app.models.transaction import Transaction
-from app.schemas.transaction import TransactionCreate
+from app.schemas.transaction import TransactionCreate, TransactionUpdate
 from app.services.transaction_service import TransactionService
 
 from uuid import uuid4
@@ -39,6 +39,17 @@ class TransactionServiceImpl(TransactionService):
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND, detail="Transaction not found"
             )
+
+    def update_transaction_by_id(
+        self, transaction_id: str, transaction_update: TransactionUpdate
+    ):
+        transaction = self.get_transaction_by_id(transaction_id)
+        for key, value in transaction_update.dict().items():
+            if value:
+                setattr(transaction, key, value)
+
+        transaction.save()
+        return transaction
 
     def delete_transaction_by_id(self, transaction_id: str):
         transaction = self.get_transaction_by_id(transaction_id)

@@ -8,8 +8,7 @@ class TransactionBase(BaseModel):
 
 class TransactionCreate(TransactionBase):
     id: Optional[str]
-    state: str
 
 
-class TransactionUpdate(BaseModel):
+class TransactionUpdate(TransactionBase):
     state: Optional[str]

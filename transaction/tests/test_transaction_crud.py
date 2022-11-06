@@ -12,14 +12,14 @@ class ValueStorageTransactionCRUD:
 class TestSuiteTransactionCRUD:
     def test_create_transaction_with_id(self):
         response = client.post(
-            "/transactions", json={"id": "testID", "state": "test_state",},
+            "/transactions", json={"id": "testID", "state": "testState",},
         )
         assert response.status_code == 201
         assert response.json()["id"] == "testID"
         ValueStorageTransactionCRUD.transaction_ids.append("testID")
 
     def test_create_transaction_without_id(self):
-        response = client.post("/transactions", json={"state": "test_state1",},)
+        response = client.post("/transactions", json={"state": "testState",},)
         assert response.status_code == 201
         assert "id" in response.json()
         ValueStorageTransactionCRUD.transaction_ids.append(response.json()["id"])
@@ -39,7 +39,23 @@ class TestSuiteTransactionCRUD:
         assert "created_at" in response.json()
 
     def test_get_transaction_not_found(self):
-        response = client.get("/transactions/testIDNotFound")
+        response = client.get("/transactions/notFoundID")
+        assert response.status_code == 404
+        assert response.json() == {"detail": "Transaction not found"}
+
+    def test_update_transaction_by_id(self):
+        response = client.patch(
+            "/transactions/testID", json={"state": "testStateUpdated",}
+        )
+        assert response.status_code == 200
+        assert response.json()["id"] == "testID"
+        assert response.json()["state"] == "testStateUpdated"
+        assert "created_at" in response.json()
+
+    def test_update_transaction_by_id_not_found(self):
+        response = client.patch(
+            "/transactions/notFoundID", json={"state": "testStateUpdated",},
+        )
         assert response.status_code == 404
         assert response.json() == {"detail": "Transaction not found"}
 
@@ -49,6 +65,6 @@ class TestSuiteTransactionCRUD:
         assert response.json()["id"] == "testID"
 
     def test_delete_transaction_not_found(self):
-        response = client.delete("/transactions/testIDNotFound")
+        response = client.delete("/transactions/notFoundID")
         assert response.status_code == 404
         assert response.json() == {"detail": "Transaction not found"}

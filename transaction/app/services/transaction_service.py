@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from app.schemas.transaction import TransactionCreate
+from app.schemas.transaction import TransactionCreate, TransactionUpdate
 
 
 class TransactionService(ABC):
@@ -9,6 +9,12 @@ class TransactionService(ABC):
 
     @abstractmethod
     def get_transaction_by_id(self, transaction_id: str):
+        pass
+
+    @abstractmethod
+    def update_transaction_by_id(
+        self, transaction_id: str, transaction_create=TransactionUpdate
+    ):
         pass
 
     @abstractmethod
