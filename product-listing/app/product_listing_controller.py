@@ -18,16 +18,6 @@ router = InferringRouter()
 
 @cbv(router)
 class ProductListingController:
-    @app.get("/product-listings/{product_listing_id}")
-    def get_product_listing_by_id(
-        product_listing_id: str, self=Depends(ProductListingDep)
-    ):
-        """Get product listing by id"""
-        product_listing = self.product_listing_service.get_product_listing_by_id(
-            product_listing_id
-        )
-        return product_listing.attribute_values
-
     @app.post("/product-listings", status_code=status.HTTP_201_CREATED)
     def create_product_listing(
         product_listing: ProductListingCreate, self=Depends(ProductListingDep)
@@ -44,6 +34,16 @@ class ProductListingController:
 
         return {"id": product_listing_id}
 
+    @app.get("/product-listings/{product_listing_id}")
+    def get_product_listing_by_id(
+        product_listing_id: str, self=Depends(ProductListingDep)
+    ):
+        """Get product listing by id"""
+        product_listing = self.product_listing_service.get_product_listing_by_id(
+            product_listing_id
+        )
+        return product_listing.attribute_values
+
     @app.patch("/product-listings/{product_listing_id}")
     def update_product_listing_by_id(
         product_listing_id: str,
@@ -57,10 +57,10 @@ class ProductListingController:
         return product_listing.attribute_values
 
     @app.delete("/product-listings/{product_listing_id}")
-    def delete_product_listing(
+    def delete_product_listing_by_id(
         product_listing_id: str, self=Depends(ProductListingDep)
     ):
-        """delete product listing by id"""
+        """Delete product listing by id"""
         product_listing_id = self.product_listing_service.delete_product_listing_by_id(
             product_listing_id
         )

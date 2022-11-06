@@ -6,60 +6,52 @@ client = TestClient(app)
 
 
 class ValueStorageProductListingCRUD:
-    ids = []
+    product_listing_ids = []
     listed_price = None
 
 
 class TestSuiteProductListingCRUD:
-    def test_create_product_listing(self):
+    def test_create_product_listing_with_id(self):
         response = client.post(
-            "/product-listings", json={"id": "123", "listed_price": "12.3"},
+            "/product-listings", json={"id": "testID", "listed_price": 12.3},
         )
         assert response.status_code == 201
-        assert response.json() == {"id": "123"}
-        ValueStorageProductListingCRUD.ids.append(response.json()["id"])
+        assert response.json() == {"id": "testID"}
+        ValueStorageProductListingCRUD.product_listing_ids.append(response.json()["id"])
 
     def test_create_product_listing_without_id(self):
         response = client.post("/product-listings",
-                               json={"listed_price": "3.45"},)
+                               json={"listed_price": 3.45},)
         assert response.status_code == 201
         assert "id" in response.json()
-        ValueStorageProductListingCRUD.ids.append(response.json()["id"])
+        ValueStorageProductListingCRUD.product_listing_ids.append(response.json()["id"])
 
     def test_create_product_listing_already_exists_same_id(self):
         response = client.post(
-            "/product-listings", json={"id": "123", "listed_price": 12.3},
+            "/product-listings", json={"id": "testID", "listed_price": 12.3},
         )
         assert response.status_code == 400
-        assert response.json() == {"detail": "Product-listing already exists"}
+        assert response.json() == {"detail": "Product listing already exists"}
 
     def test_get_product_listing_by_id(self):
-        response = client.get("/product-listings/123")
+        response = client.get("/product-listings/testID")
         assert response.status_code == 200
-        assert response.json() == {"id": "123", "listed_price": 12.3}
+        assert response.json() == {"id": "testID", "listed_price": 12.3}
 
-    def test_upadte_product_listing_by_id(self):
-        response = client.patch("/product-listings/123",
-                                json={"id": "123",
+    def test_update_product_listing_by_id(self):
+        response = client.patch("/product-listings/testID",
+                                json={"id": "testID",
                                       "listed_price": 1200
                                       }
                                 )
         assert response.status_code == 200
-        assert response.json()["id"] == "123"
+        assert response.json()["id"] == "testID"
         assert response.json()["listed_price"] == 1200.0
 
     def test_delete_product_listing_by_id(self):
-        for id in ValueStorageProductListingCRUD.ids:
+        for id in ValueStorageProductListingCRUD.product_listing_ids:
             response = client.delete(
                 f'/product-listings/{id}'
             )
             assert response.status_code == 200
             assert response.json() == {"id": id}
-
-    # def test_delete_product_listing_by_id_not_found():
-    #     for id in ValueStorageProductListingCRUD.ids:
-    #         response = client.delete(
-    #             f'/product-listings/{id}'
-    #         )
-    #         assert response.status_code == 200
-    #         assert response.json() == {"id": id}

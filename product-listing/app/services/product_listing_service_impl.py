@@ -1,6 +1,5 @@
 from fastapi import HTTPException, status
 
-from app.core.security import get_password_hash
 from app.models.product_listing import ProductListing
 from app.schemas.product_listing import ProductListingCreate, ProductListingUpdate
 from app.services.product_listing_service import ProductListingService
@@ -24,23 +23,11 @@ class ProductListingServiceImpl(ProductListingService):
             if product_listing_already_exists:
                 raise HTTPException(
                     status_code=status.HTTP_400_BAD_REQUEST,
-                    detail="Product-listing already exists",
+                    detail="Product listing already exists",
                 )
         else:
             # If id is not provided, generate one
             product_listing_create.id = str(uuid4())
-
-        # If product_listing_name already exists, raise exception
-        try:
-            product_listing_found = self.get_product_listing_by_id(
-                product_listing_create.id
-            )
-            if product_listing_found:
-                raise HTTPException(
-                    status_code=status.HTTP_400_BAD_REQUEST, detail="Product-listing already exists",
-                )
-        except:
-            pass
 
         product_listing = ProductListing(**product_listing_create.dict())
         product_listing.save()
@@ -52,7 +39,7 @@ class ProductListingServiceImpl(ProductListingService):
         except ProductListing.DoesNotExist:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
-                detail="Product-listing not found",
+                detail="Product listing not found",
             )
 
     def update_product_listing_by_id(

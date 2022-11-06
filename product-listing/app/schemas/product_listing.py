@@ -3,13 +3,12 @@ from typing import Optional
 
 
 class ProductListingBase(BaseModel):
-    id: Optional[str]
     listed_price: float
 
 
 class ProductListingCreate(ProductListingBase):
-    pass
+    id: Optional[str]
 
 
 class ProductListingUpdate(ProductListingBase):
-    pass
+    listed_price: Optional[float]

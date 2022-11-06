@@ -1,5 +1,5 @@
 from app.services.product_listing_service import ProductListingService
-from app.services.product_listing_impl import ProductListingServiceImpl
+from app.services.product_listing_service_impl import ProductListingServiceImpl
 
 
 class ProductListingDep:

@@ -1,17 +1,6 @@
 from pynamodb.models import Model
-from pynamodb.indexes import GlobalSecondaryIndex, AllProjection
 from pynamodb.attributes import UnicodeAttribute, NumberAttribute
 import os
-
-
-class ProductListingIndex(GlobalSecondaryIndex):
-    class Meta:
-        index_name = "username"
-        read_capacity_units = 1
-        write_capacity_units = 1
-        projection = AllProjection()
-
-    username = UnicodeAttribute(hash_key=True)
 
 
 class ProductListing(Model):
@@ -22,4 +11,3 @@ class ProductListing(Model):
 
     id = UnicodeAttribute(hash_key=True)
     listed_price = NumberAttribute()
-    # productListing_index = ProductListingIndex()
