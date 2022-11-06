@@ -46,7 +46,7 @@ class ProductListingController:
         return product_listing.attribute_values
 
     @app.delete("/product-listings/{product_listing_id}")
-    def create_product_listing(product_listing_id: str, product_listing: ProductListingUpdate, self=Depends(ProductListingDep)):
+    def delete_product_listing_by_id(product_listing_id: str, self=Depends(ProductListingDep)):
         product_listing_id = self.product_listing_service.delete_product_listing_by_id(product_listing_id)
         return {"id" : product_listing_id}
 
