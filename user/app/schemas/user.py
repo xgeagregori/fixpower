@@ -11,7 +11,6 @@ class UserCreate(BaseModel):
 
 
 class UserUpdate(BaseModel):
-    username: Optional[str]
     email: Optional[str]
     password: Optional[str]
 
@@ -22,3 +21,10 @@ class UserInDB(BaseModel):
     email: str
     hashed_password: str
     is_admin: Optional[bool]
+
+
+class UserOut(BaseModel):
+    id: str
+    username: str
+    email: str
+    is_admin: bool

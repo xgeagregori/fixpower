@@ -10,12 +10,13 @@ from app.dependencies.auth import (
     create_access_token,
     get_current_user,
 )
+from app.dependencies.auth import check_user_permissions
 from app.dependencies.user import UserDep
-from app.schemas.user import UserCreate, UserUpdate, UserInDB
+from app.schemas.user import UserCreate, UserUpdate, UserInDB, UserOut
 from app.schemas.notification import NotificationCreate, NotificationUpdate
 
 app = FastAPI(
-    root_path="/prod/user-api/v1",
+    # root_path="/prod/user-api/v1",
     title="User API",
     version="1.0.0",
 )
@@ -60,7 +61,14 @@ class UserController:
     ):
         """Get all users"""
         users = self.user_service.get_users()
-        return [user.attribute_values for user in users]
+
+        # Remove hashed_password from response
+        formatted_users = []
+        for user in users:
+            formatted_user = UserOut(**user.attribute_values)
+            formatted_users.append(formatted_user)
+
+        return formatted_users
 
     @app.get("/users/me", tags=["users"])
     def get_users(current_user: UserInDB = Depends(get_current_user)):
@@ -74,6 +82,7 @@ class UserController:
         self=Depends(UserDep),
     ):
         """Get user by id"""
+        check_user_permissions(current_user, user_id)
         user = self.user_service.get_user_by_id(user_id)
         return user.attribute_values
 
@@ -85,6 +94,7 @@ class UserController:
         self=Depends(UserDep),
     ):
         """Update user by id"""
+        check_user_permissions(current_user, user_id)
         user = self.user_service.update_user_by_id(user_id, user_update)
         return user.attribute_values
 
@@ -95,6 +105,7 @@ class UserController:
         self=Depends(UserDep),
     ):
         """Delete user by id"""
+        check_user_permissions(current_user, user_id)
         user_id = self.user_service.delete_user_by_id(user_id)
         return {"id": user_id}
 
@@ -111,6 +122,7 @@ class UserController:
         self=Depends(UserDep),
     ):
         """Create notification for user"""
+        check_user_permissions(current_user, user_id)
         notification_id = self.notification_service.create_notification(
             user_id, notification_create
         )
@@ -123,6 +135,7 @@ class UserController:
         self=Depends(UserDep),
     ):
         """Get notifications for user"""
+        check_user_permissions(current_user, user_id)
         notifications = self.notification_service.get_notifications_by_user_id(user_id)
         return [notification.attribute_values for notification in notifications]
 
@@ -134,6 +147,7 @@ class UserController:
         self=Depends(UserDep),
     ):
         """Get notification by id for user"""
+        check_user_permissions(current_user, user_id)
         notification = self.notification_service.get_notification_by_id(
             user_id, notification_id
         )
@@ -150,6 +164,7 @@ class UserController:
         self=Depends(UserDep),
     ):
         """Update notification by id for user"""
+        check_user_permissions(current_user, user_id)
         notification = self.notification_service.update_notification_by_id(
             user_id, notification_id, notification_update
         )
@@ -165,6 +180,7 @@ class UserController:
         self=Depends(UserDep),
     ):
         """Delete notification by id for user"""
+        check_user_permissions(current_user, user_id)
         notification_id = self.notification_service.delete_notification_by_id(
             user_id, notification_id
         )

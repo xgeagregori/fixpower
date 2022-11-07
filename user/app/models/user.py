@@ -34,7 +34,7 @@ class User(Model):
     email = UnicodeAttribute()
     hashed_password = UnicodeAttribute()
     notifications = ListAttribute(of=Notification, default=[])
-    is_admin = BooleanAttribute(default=False)
+    is_admin = BooleanAttribute()
     created_at = UTCDateTimeAttribute(default=datetime.datetime.now)
 
     user_index = UserIndex()
