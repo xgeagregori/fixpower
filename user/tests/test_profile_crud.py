@@ -4,9 +4,11 @@ from app.user_controller import app
 
 client = TestClient(app)
 
+
 class ValueStorageProfileCRUD:
     user_id = None
     access_token = None
+
 
 class TestSuiteProfileCRUD:
     def test_create_user(self):
@@ -39,9 +41,7 @@ class TestSuiteProfileCRUD:
                 "address": "testAddress",
                 "settings": {"sms_notifications": False},
             },
-            headers={
-                "Authorization": f"Bearer {ValueStorageProfileCRUD.access_token}"
-            },
+            headers={"Authorization": f"Bearer {ValueStorageProfileCRUD.access_token}"},
         )
         assert response.status_code == 200
         assert response.json()["address"] == "testAddress"
@@ -51,9 +51,7 @@ class TestSuiteProfileCRUD:
     def test_get_profile_by_user_id(self):
         response = client.get(
             f"/users/{ValueStorageProfileCRUD.user_id}/profile",
-            headers={
-                "Authorization": f"Bearer {ValueStorageProfileCRUD.access_token}"
-            },
+            headers={"Authorization": f"Bearer {ValueStorageProfileCRUD.access_token}"},
         )
         assert response.status_code == 200
         assert response.json()["address"] == "testAddress"
@@ -63,12 +61,7 @@ class TestSuiteProfileCRUD:
     def test_delete_user(self):
         response = client.delete(
             f"/users/{ValueStorageProfileCRUD.user_id}",
-            headers={
-                "Authorization": f"Bearer {ValueStorageProfileCRUD.access_token}"
-            },
+            headers={"Authorization": f"Bearer {ValueStorageProfileCRUD.access_token}"},
         )
         assert response.status_code == 200
         assert response.json() == {"id": ValueStorageProfileCRUD.user_id}
-        
-
-    

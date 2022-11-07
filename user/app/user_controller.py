@@ -13,12 +13,13 @@ from app.dependencies.auth import (
 from app.dependencies.auth import check_user_permissions
 from app.dependencies.user import UserDep
 from app.schemas.profile import ProfileUpdate, ProfileOut
+from app.schemas.review import ReviewCreate, ReviewUpdate
 from app.schemas.settings import SettingsOut
 from app.schemas.user import UserCreate, UserUpdate, UserInDB, UserOut
 from app.schemas.notification import NotificationCreate, NotificationUpdate
 
 app = FastAPI(
-    # root_path="/prod/user-api/v1",
+    root_path="/prod/user-api/v1",
     title="User API",
     version="1.0.0",
 )
@@ -67,7 +68,9 @@ class UserController:
         # Remove hashed_password from response
         formatted_users = []
         for user in users:
-            user.profile.settings = SettingsOut(**user.profile.settings.attribute_values)
+            user.profile.settings = SettingsOut(
+                **user.profile.settings.attribute_values
+            )
             user.profile = ProfileOut(**user.profile.attribute_values)
             formatted_user = UserOut(**user.attribute_values)
             formatted_users.append(formatted_user)
@@ -86,9 +89,11 @@ class UserController:
         self=Depends(UserDep),
     ):
         """Get user by id"""
-        check_user_permissions(current_user, user_id)
         user = self.user_service.get_user_by_id(user_id)
-        return user.attribute_values
+        user.profile.settings = SettingsOut(**user.profile.settings.attribute_values)
+        user.profile = ProfileOut(**user.profile.attribute_values)
+        formatted_user = UserOut(**user.attribute_values)
+        return formatted_user
 
     @app.patch("/users/{user_id}", tags=["users"])
     def update_user_by_id(
@@ -198,7 +203,6 @@ class UserController:
         self=Depends(UserDep),
     ):
         """Get profile for user"""
-        check_user_permissions(current_user, user_id)
         profile = self.profile_service.get_profile_by_user_id(user_id)
         profile.settings = SettingsOut(**profile.settings.attribute_values)
 
@@ -213,9 +217,79 @@ class UserController:
     ):
         """Update profile for user"""
         check_user_permissions(current_user, user_id)
-        profile = self.profile_service.update_profile_by_user_id(user_id, profile_update)
+        profile = self.profile_service.update_profile_by_user_id(
+            user_id, profile_update
+        )
         profile.settings = SettingsOut(**profile.settings.attribute_values)
         return ProfileOut(**profile.attribute_values)
+
+    # Review routes
+    @app.post(
+        "/users/{user_id}/reviews",
+        status_code=status.HTTP_201_CREATED,
+        tags=["reviews"],
+    )
+    def create_review(
+        user_id: str,
+        review_create: ReviewCreate,
+        current_user: UserInDB = Depends(get_current_user),
+        self=Depends(UserDep),
+    ):
+        """Create review for user"""
+        # The sender of the review must be the current user
+        check_user_permissions(current_user, review_create.sender_id)
+        review_id = self.review_service.create_review(user_id, review_create)
+        return {"id": review_id}
+
+    @app.get("/users/{user_id}/reviews", tags=["reviews"])
+    def get_reviews_by_user_id(
+        user_id: str,
+        current_user: UserInDB = Depends(get_current_user),
+        self=Depends(UserDep),
+    ):
+        """Get reviews for user"""
+        reviews = self.review_service.get_reviews_by_user_id(user_id)
+        return [review.attribute_values for review in reviews]
+
+    @app.get("/users/{user_id}/reviews/{review_id}", tags=["reviews"])
+    def get_review_by_id(
+        user_id: str,
+        review_id: str,
+        current_user: UserInDB = Depends(get_current_user),
+        self=Depends(UserDep),
+    ):
+        """Get review by id for user"""
+        review = self.review_service.get_review_by_id(user_id, review_id)
+        return review.attribute_values
+
+    @app.patch("/users/{user_id}/reviews/{review_id}", tags=["reviews"])
+    def update_review_by_id(
+        user_id: str,
+        review_id: str,
+        review_update: ReviewUpdate,
+        current_user: UserInDB = Depends(get_current_user),
+        self=Depends(UserDep),
+    ):
+        """Update review by id for user"""
+        review = self.review_service.get_review_by_id(user_id, review_id)
+        check_user_permissions(current_user, review.sender_id)
+        review = self.review_service.update_review_by_id(
+            user_id, review_id, review_update
+        )
+        return review.attribute_values
+
+    @app.delete("/users/{user_id}/reviews/{review_id}", tags=["reviews"])
+    def delete_review_by_id(
+        user_id: str,
+        review_id: str,
+        current_user: UserInDB = Depends(get_current_user),
+        self=Depends(UserDep),
+    ):
+        """Delete review by id for user"""
+        review = self.review_service.get_review_by_id(user_id, review_id)
+        check_user_permissions(current_user, review.sender_id)
+        review_id = self.review_service.delete_review_by_id(user_id, review_id)
+        return {"id": review_id}
 
 
 app.include_router(router)

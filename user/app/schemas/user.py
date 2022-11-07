@@ -3,6 +3,8 @@ from typing import Optional
 
 from app.schemas.profile import ProfileCreate, ProfileInDB, ProfileOut
 
+from datetime import datetime
+
 
 class UserCreate(BaseModel):
     id: Optional[str]
@@ -40,3 +42,4 @@ class UserOut(BaseModel):
     email: str
     is_admin: bool
     profile: ProfileOut
+    created_at: datetime

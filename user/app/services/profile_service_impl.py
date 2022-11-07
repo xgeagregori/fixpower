@@ -3,6 +3,7 @@ from app.schemas.settings import SettingsUpdate
 from app.services.profile_service import ProfileService
 from app.services.user_service_impl import UserServiceImpl
 
+
 class ProfileServiceImpl(ProfileService):
     def __init__(self):
         self.user_service = UserServiceImpl()

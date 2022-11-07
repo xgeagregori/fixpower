@@ -155,7 +155,7 @@ class TestSuiteUserCRUD:
         assert response.json()["username"] == "testUsername2"
         assert response.json()["email"] == "test2@example.com"
         assert "password" not in response.json()
-        assert "hashed_password" in response.json()
+        assert "hashed_password" not in response.json()
         assert "created_at" in response.json()
 
     def test_update_user_by_id_not_found(self):
