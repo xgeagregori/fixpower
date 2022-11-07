@@ -12,6 +12,8 @@ from app.dependencies.auth import (
 )
 from app.dependencies.auth import check_user_permissions
 from app.dependencies.user import UserDep
+from app.schemas.profile import ProfileUpdate, ProfileOut
+from app.schemas.settings import SettingsOut
 from app.schemas.user import UserCreate, UserUpdate, UserInDB, UserOut
 from app.schemas.notification import NotificationCreate, NotificationUpdate
 
@@ -65,6 +67,8 @@ class UserController:
         # Remove hashed_password from response
         formatted_users = []
         for user in users:
+            user.profile.settings = SettingsOut(**user.profile.settings.attribute_values)
+            user.profile = ProfileOut(**user.profile.attribute_values)
             formatted_user = UserOut(**user.attribute_values)
             formatted_users.append(formatted_user)
 
@@ -185,6 +189,33 @@ class UserController:
             user_id, notification_id
         )
         return {"id": notification_id}
+
+    # Profile routes
+    @app.get("/users/{user_id}/profile", tags=["profile"])
+    def get_profile_by_user_id(
+        user_id: str,
+        current_user: UserInDB = Depends(get_current_user),
+        self=Depends(UserDep),
+    ):
+        """Get profile for user"""
+        check_user_permissions(current_user, user_id)
+        profile = self.profile_service.get_profile_by_user_id(user_id)
+        profile.settings = SettingsOut(**profile.settings.attribute_values)
+
+        return ProfileOut(**profile.attribute_values)
+
+    @app.patch("/users/{user_id}/profile", tags=["profile"])
+    def update_profile_by_user_id(
+        user_id: str,
+        profile_update: ProfileUpdate,
+        current_user: UserInDB = Depends(get_current_user),
+        self=Depends(UserDep),
+    ):
+        """Update profile for user"""
+        check_user_permissions(current_user, user_id)
+        profile = self.profile_service.update_profile_by_user_id(user_id, profile_update)
+        profile.settings = SettingsOut(**profile.settings.attribute_values)
+        return ProfileOut(**profile.attribute_values)
 
 
 app.include_router(router)
