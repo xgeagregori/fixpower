@@ -8,6 +8,7 @@ from pynamodb.attributes import (
 )
 
 from app.models.notification import Notification
+from app.models.profile import ProfileAttribute
 
 import datetime
 import os
@@ -33,6 +34,7 @@ class User(Model):
     username = UnicodeAttribute()
     email = UnicodeAttribute()
     hashed_password = UnicodeAttribute()
+    profile = ProfileAttribute()
     notifications = ListAttribute(of=Notification, default=[])
     is_admin = BooleanAttribute()
     created_at = UTCDateTimeAttribute(default=datetime.datetime.now)
