@@ -6,11 +6,20 @@ from app.core.config import settings
 from app.core.security import verify_password
 from app.dependencies.user import UserDep
 from app.schemas.token import TokenData
+from app.schemas.user import UserInDB
 
 from jose import JWTError, jwt
 from datetime import datetime, timedelta
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
+
+
+def check_user_permissions(current_user: UserInDB, user_id: int):
+    if current_user.id != user_id and not current_user.is_admin:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="You don't have permission to access this resource",
+        )
 
 
 def authenticate_user(user_service, username: str, password: str):

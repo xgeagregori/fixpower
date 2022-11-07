@@ -1,6 +1,11 @@
 from pynamodb.models import Model
 from pynamodb.indexes import GlobalSecondaryIndex, AllProjection
-from pynamodb.attributes import UnicodeAttribute, UTCDateTimeAttribute, ListAttribute
+from pynamodb.attributes import (
+    UnicodeAttribute,
+    UTCDateTimeAttribute,
+    ListAttribute,
+    BooleanAttribute,
+)
 
 from app.models.notification import Notification
 
@@ -29,6 +34,7 @@ class User(Model):
     email = UnicodeAttribute()
     hashed_password = UnicodeAttribute()
     notifications = ListAttribute(of=Notification, default=[])
+    is_admin = BooleanAttribute()
     created_at = UTCDateTimeAttribute(default=datetime.datetime.now)
 
     user_index = UserIndex()
