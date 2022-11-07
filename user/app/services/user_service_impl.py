@@ -38,13 +38,8 @@ class UserServiceImpl(UserService):
             )
 
         hashed_password = get_password_hash(user_create.password)
-
-        # Default is_admin to False
-        if user_create.is_admin is None:
-            user_create.is_admin = False
-
         user_for_db = UserInDB(**user_create.dict(), hashed_password=hashed_password)
-
+        print(user_for_db)
         user = User(**user_for_db.dict())
         user.save()
         return user.id

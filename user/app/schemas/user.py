@@ -7,7 +7,7 @@ class UserCreate(BaseModel):
     username: str
     email: str
     password: str
-    is_admin: Optional[bool]
+    is_admin: Optional[bool] = False
 
 
 class UserUpdate(BaseModel):
@@ -20,7 +20,7 @@ class UserInDB(BaseModel):
     username: str
     email: str
     hashed_password: str
-    is_admin: Optional[bool]
+    is_admin: bool
 
 
 class UserOut(BaseModel):
