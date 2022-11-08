@@ -6,3 +6,11 @@ class OrderService(ABC):
     @abstractmethod
     def create_order(self, order_create: OrderCreate):
         pass
+
+    @abstractmethod
+    def get_orders(self):
+        pass
+
+    @abstractmethod
+    def get_order_by_id(self, order_id: str):
+        pass

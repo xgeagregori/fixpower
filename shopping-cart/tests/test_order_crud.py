@@ -16,7 +16,7 @@ class TestSuiteOrderCRUD:
         user_response = requests.post(
             os.getenv("API_GATEWAY_URL") + "/user-api/v1/register",
             json={
-                "username": "testUsernameOrder3",
+                "username": "testUsernameOrder11",
                 "email": "testOrder@example.com",
                 "password": "testPasswordOrder",
             },
@@ -24,6 +24,7 @@ class TestSuiteOrderCRUD:
         assert user_response.status_code == 201
         assert "id" in user_response.json()
         ValueStorageOrderCRUD.user_id = user_response.json()["id"]
+       
 
     def test_create_order_with_id(self):
         response = client.post(
@@ -33,6 +34,7 @@ class TestSuiteOrderCRUD:
         assert response.status_code == 201
         assert "id" in response.json()
         ValueStorageOrderCRUD.order_id = response.json()["id"]
+        
         
     # def test_create_order_with_existing_id(self):
     #     response = client.post(
@@ -48,7 +50,7 @@ class TestSuiteOrderCRUD:
         assert response.status_code == 200
         
     def test_get_order_by_id(self):
-        response= client.get("/shopping-carts/{ValueStorageOrderCRUD.user_id}")
+        response= client.get(f"/shopping-carts/{ValueStorageOrderCRUD.order_id}")
         assert response.status_code == 200
         assert "user" in response.json()
         assert "price" in response.json()

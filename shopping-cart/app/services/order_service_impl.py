@@ -1,6 +1,5 @@
 from fastapi import HTTPException, status
-
-# from pynamodb.exception import DoesNotExists, DeleteError
+from pynamodb.exceptions import DoesNotExist, DeleteError
 
 from app.models.order import Order
 from app.schemas.order import OrderCreate, OrderUpdate
@@ -16,3 +15,21 @@ class OrderServiceImpl(OrderService):
         order.save()
 
         return order.id
+
+    def get_orders(self):
+        try:
+            return Order.scan()
+        except Order.ScanError:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND, detail="No Order found",
+            )
+
+    def get_order_by_id(self, order_id: str):
+        try:
+            print(order_id)
+            order = Order.get(order_id)
+            return order
+        except DoesNotExist:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND, detail="Order not found"
+            )

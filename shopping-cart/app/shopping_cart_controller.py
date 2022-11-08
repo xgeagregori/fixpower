@@ -32,5 +32,18 @@ class ShoppingCartController:
             )
         return {"id": order_id}
 
+    @app.get("/shopping-carts")
+    def get_orders(self=Depends(OrderDep)):
+        """Get all orders"""
+        orders = self.order_service.get_orders()
+        return [orders.attribute_values for orders in orders]
+
+    @app.get("/shopping-carts/{order_id}")
+    def get_order_by_id(order_id: str, self=Depends(OrderDep)):
+        """Get Order by id."""
+        order = self.order_service.get_order_by_id(order_id)
+        # return order
+        return {"id": order.id, **order.attribute_values}
+
 
 app.include_router(router)
