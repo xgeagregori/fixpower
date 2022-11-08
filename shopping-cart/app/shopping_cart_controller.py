@@ -1,11 +1,17 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends, status, HTTPException
 from mangum import Mangum
 
 from fastapi_utils.inferring_router import InferringRouter
 from fastapi_utils.cbv import cbv
 
+
+from app.dependencies.order import OrderDep
+from app.schemas.order import OrderCreate, OrderUpdate
+from app.services.order_service import OrderService
+from app.services.order_service_impl import OrderServiceImpl
+
 app = FastAPI(
-    root_path="/prod/shopping-cart-api/v1",
+    # root_path="/prod/shopping-cart-api/v1",
     title="Shopping Cart API",
     version="1.0.0",
 )
@@ -15,10 +21,16 @@ router = InferringRouter()
 
 @cbv(router)
 class ShoppingCartController:
-    @app.get("/shopping-carts")
-    def get_shopping_carts():
-        """Get shopping carts."""
-        return {"message": "Welcome to the Shopping Cart Service!"}
+    @app.post("/shopping-carts", status_code=status.HTTP_201_CREATED)
+    def create_order(order_create: OrderCreate, self=Depends(OrderDep)):
+        """Create an order"""
+        order_id = self.order_service.create_order(order_create)
+        if order_id is None:
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="Order not created",
+            )
+        return {"id": order_id}
 
 
 app.include_router(router)
