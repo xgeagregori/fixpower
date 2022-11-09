@@ -1,8 +1,11 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends, status, HTTPException
 from mangum import Mangum
 
-from fastapi_utils.inferring_router import InferringRouter
 from fastapi_utils.cbv import cbv
+from fastapi_utils.inferring_router import InferringRouter
+
+from app.dependencies.transaction import TransactionDep
+from app.schemas.transaction import TransactionCreate, TransactionUpdate
 
 app = FastAPI(
     root_path="/prod/transaction-api/v1",
@@ -15,10 +18,51 @@ router = InferringRouter()
 
 @cbv(router)
 class TransactionController:
+    @app.post("/transactions", status_code=status.HTTP_201_CREATED)
+    def create_transaction(
+        transaction_create: TransactionCreate, self=Depends(TransactionDep)
+    ):
+        """Create transaction."""
+        transaction_id = self.transaction_service.create_transaction(transaction_create)
+        if transaction_id is None:
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="Transaction not created",
+            )
+        return {"id": transaction_id}
+
     @app.get("/transactions")
-    def get_transactions():
-        """Get transactions."""
-        return {"message": "Welcome to the Transaction Service!!!"}
+    def get_transactions(self=Depends(TransactionDep)):
+        """Get all transactions"""
+        transactions = self.transaction_service.get_transactions()
+        return [transactions.attribute_values for transactions in transactions]
+
+    @app.get("/transactions/{transaction_id}")
+    def get_transaction_by_id(transaction_id: str, self=Depends(TransactionDep)):
+        """Get transaction by id."""
+        transaction = self.transaction_service.get_transaction_by_id(transaction_id)
+        return {"id": transaction.id, **transaction.attribute_values}
+
+    @app.patch("/transactions/{transaction_id}")
+    def update_transaction_by_id(
+        transaction_id: str,
+        transaction_update: TransactionUpdate,
+        self=Depends(TransactionDep),
+    ):
+        """Update transaction by id"""
+        transaction = self.transaction_service.update_transaction_by_id(
+            transaction_id, transaction_update
+        )
+        return transaction.attribute_values
+
+    @app.delete("/transactions/{transaction_id}")
+    def delete_transaction_by_id(transaction_id: str, self=Depends(TransactionDep)):
+        """Delete transaction by id."""
+        transaction_id = self.transaction_service.delete_transaction_by_id(
+            transaction_id
+        )
+
+        return {"id": transaction_id}
 
 
 app.include_router(router)
