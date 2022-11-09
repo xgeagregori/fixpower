@@ -11,7 +11,10 @@ from app.dependencies.auth import (
     check_user_is_admin,
 )
 from app.dependencies.product_listing import ProductListingDep
+from app.dependencies.offer import OfferDep
 from app.schemas.product_listing import ProductListingCreate, ProductListingUpdate
+from app.schemas.offer import OfferCreate, OfferUpdate
+
 
 import os
 import requests
@@ -110,6 +113,59 @@ class ProductListingController:
             product_listing_id
         )
         return {"id": product_listing_id}
+
+    @app.post(
+        "/product-listings/{product_listing_id}/offers",
+        status_code=status.HTTP_201_CREATED,
+        tags=["offers"],
+    )
+    def create_offer(
+        product_listing_id: str, offer_create: OfferCreate, self=Depends(OfferDep)
+    ):
+        """Create offer"""
+        offer_id = self.offer_service.create_offer(product_listing_id, offer_create)
+        return {"id": offer_id}
+
+    @app.get("/product-listings/{product_listing_id}/offers", tags=["offers"])
+    def get_offers_by_product_listing_id(
+        product_listing_id: str, self=Depends(OfferDep)
+    ):
+        """Get offers by product listing id"""
+        offers = self.offer_service.get_offers_by_product_listing_id(product_listing_id)
+        return [offer.attribute_values for offer in offers]
+
+    @app.get(
+        "/product-listings/{product_listing_id}/offers/{offer_id}", tags=["offers"]
+    )
+    def get_offer_by_id(product_listing_id: str, offer_id: str, self=Depends(OfferDep)):
+        """Get offer by id"""
+        offer = self.offer_service.get_offer_by_id(product_listing_id, offer_id)
+        return offer.attribute_values
+
+    @app.patch(
+        "/product-listings/{product_listing_id}/offers/{offer_id}", tags=["offers"]
+    )
+    def update_offer_by_id(
+        product_listing_id: str,
+        offer_id: str,
+        offer_update: OfferUpdate,
+        self=Depends(OfferDep),
+    ):
+        """Update offer"""
+        offer = self.offer_service.update_offer_by_id(
+            product_listing_id, offer_id, offer_update
+        )
+        return offer.attribute_values
+
+    @app.delete(
+        "/product-listings/{product_listing_id}/offers/{offer_id}", tags=["offers"]
+    )
+    def delete_offer_by_id(
+        product_listing_id: str, offer_id: str, self=Depends(OfferDep)
+    ):
+        """Delete offer"""
+        offer_id = self.offer_service.delete_offer_by_id(product_listing_id, offer_id)
+        return {"id": offer_id}
 
 
 app.include_router(router)
