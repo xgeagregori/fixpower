@@ -123,7 +123,8 @@ class TestSuiteProductListingCRUD:
             },
         )
         assert response.status_code == 200
-        assert response.json() == {"id": "testID", "listed_price": 12.3}
+        assert response.json()["id"] == "testID"
+        assert response.json()["listed_price"] == 12.3
 
     def test_get_product_listing_by_id_not_found(self):
         response = client.get(
