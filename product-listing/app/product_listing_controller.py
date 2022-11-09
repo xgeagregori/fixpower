@@ -20,7 +20,7 @@ import os
 import requests
 
 app = FastAPI(
-    # root_path="/prod/product-listing-api/v1",
+    root_path="/prod/product-listing-api/v1",
     title="Product Listing API",
     version="1.0.0",
 )
