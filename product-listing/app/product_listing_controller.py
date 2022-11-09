@@ -5,10 +5,13 @@ from fastapi_utils.inferring_router import InferringRouter
 from fastapi_utils.cbv import cbv
 
 from app.dependencies.product_listing import ProductListingDep
+from app.dependencies.offer import OfferDep
 from app.schemas.product_listing import ProductListingCreate, ProductListingUpdate
+from app.schemas.offer import OfferCreate, OfferUpdate
+
 
 app = FastAPI(
-    root_path="/prod/product-listing-api/v1",
+    # root_path="/prod/product-listing-api/v1",
     title="Product Listing API",
     version="1.0.0",
 )
@@ -73,6 +76,34 @@ class ProductListingController:
             product_listing_id
         )
         return {"id": product_listing_id}
+
+    @app.post("/product-listings/{product_listing_id}/offers", status_code=status.HTTP_201_CREATED, tags=["offers"])
+    def add_offer(product_listing_id: str, offer_create: OfferCreate, self=Depends(OfferDep)):
+        """add offer"""
+        offer_id = self.offer_service.add_offer(
+            product_listing_id, offer_create)
+        return {"id": offer_id}
+
+    @app.get("/product-listings/{product_listing_id}/accept_offer")
+    def accept_offer(product_listing_id: str, self=Depends(OfferDep)):
+        """accept offer"""
+        offer = self.offer_service.accept_offer(
+            product_listing_id)
+        return offer.attribute_values
+
+    @app.get("/product-listings/{product_listing_id}/decline_offer")
+    def decline_offer(product_listing_id: str, self=Depends(OfferDep)):
+        """decline offer"""
+        offer = self.offer_service.decline_offer(
+            product_listing_id)
+        return offer.attribute_values
+
+    @app.post("/product-listings/{product_listing_id}/counter_offer", status_code=status.HTTP_201_CREATED, tags=["offers"])
+    def counter_offer(product_listing_id: str, offer_update: OfferUpdate, self=Depends(OfferDep)):
+        """counter offer"""
+        product_listing = self.offer_service.counter_offer(
+            product_listing_id, offer_update)
+        return product_listing.attribute_values
 
 
 app.include_router(router)

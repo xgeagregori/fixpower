@@ -65,4 +65,4 @@ class ProductListingServiceImpl(ProductListingService):
     def delete_product_listing_by_id(self, id: str):
         product_listing = self.get_product_listing_by_id(id)
         product_listing.delete()
-        return id
+        return id        

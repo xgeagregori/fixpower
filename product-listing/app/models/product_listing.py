@@ -1,5 +1,8 @@
 from pynamodb.models import Model
-from pynamodb.attributes import UnicodeAttribute, NumberAttribute
+from pynamodb.attributes import UnicodeAttribute, NumberAttribute, ListAttribute
+
+from app.models.offer import Offer
+
 import os
 
 
@@ -11,3 +14,4 @@ class ProductListing(Model):
 
     id = UnicodeAttribute(hash_key=True)
     listed_price = NumberAttribute()
+    offers = ListAttribute(of=Offer, default=[])
