@@ -28,7 +28,7 @@ class NotificationServiceImpl(NotificationService):
             notifier = SMSNotifier(notifier)
         if settings.email_notifications:
             notifier = EmailNotifier(notifier)
-        
+
         notifier.send(notification.attribute_values)
 
         return notification.id
