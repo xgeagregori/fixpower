@@ -33,5 +33,6 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_PRODUCT_LISTING_TABLE_NAME: ${{ secrets.AWS_PRODUCT_LISTING_TABLE_NAME }}
+          AWS_API_GATEWAY_URL: ${{ secrets.AWS_API_GATEWAY_URL }}
         run: |
           pipenv run pytest
