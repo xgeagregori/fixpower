@@ -35,4 +35,4 @@ jobs:
           AWS_PRODUCT_LISTING_TABLE_NAME: ${{ secrets.AWS_PRODUCT_LISTING_TABLE_NAME }}
           AWS_API_GATEWAY_URL: ${{ secrets.AWS_API_GATEWAY_URL }}
         run: |
-          echo ${{secrets.AWS_API_GATEWAY_URL}} | sed 's/./& /g'
+          pipenv run pytest
