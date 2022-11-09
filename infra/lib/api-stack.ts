@@ -13,5 +13,10 @@ export class ApiStack extends cdk.Stack {
     });
 
     this.api = api;
+
+    // Output stage prod url for the API
+    new cdk.CfnOutput(this, "ApiGatewayUrl", {
+      value: api.url
+    });
   }
 }

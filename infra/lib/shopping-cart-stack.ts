@@ -17,7 +17,6 @@ export class ShoppingCartStack extends cdk.Stack {
         name: "id",
         type: dynamodb.AttributeType.STRING,
       },
-      billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
       removalPolicy: cdk.RemovalPolicy.DESTROY,
     });
 

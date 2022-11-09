@@ -1,5 +1,9 @@
 cdk deploy --all --outputs-file ./cdk-outputs.json --require-approval never
 
+apiGatewayUrl=$(jq -r '.ApiGatewayUrl' ./cdk-outputs.json)
+
+gh secret set AWS_API_GATEWAY_URL -b $apiGatewayUrl
+
 productListingArn=$(jq -r '.ProductListingStack.ProductListingLambdaArn' ./cdk-outputs.json)
 shoppingCartArn=$(jq -r '.ShoppingCartStack.ShoppingCartLambdaArn' ./cdk-outputs.json)
 transactionArn=$(jq -r '.TransactionStack.TransactionLambdaArn' ./cdk-outputs.json)
