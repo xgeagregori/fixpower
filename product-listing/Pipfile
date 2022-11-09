@@ -12,6 +12,7 @@ mangum = "*"
 fastapi-utils = "*"
 pynamodb = "*"
 passlib = "*"
+python-multipart = "*"
 
 [dev-packages]
 
