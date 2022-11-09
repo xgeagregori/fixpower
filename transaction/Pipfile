@@ -11,6 +11,7 @@ pytest = "*"
 mangum = "*"
 fastapi-utils = "*"
 pynamodb = "*"
+python-multipart = "*"
 
 [dev-packages]
 
