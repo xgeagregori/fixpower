@@ -1,7 +1,11 @@
-from pynamodb.attributes import UnicodeAttribute, UTCDateTimeAttribute, MapAttribute, NumberAttribute
+from pynamodb.attributes import (
+    UnicodeAttribute,
+    UTCDateTimeAttribute,
+    MapAttribute,
+    NumberAttribute,
+)
 
 import datetime
-
 
 
 class Offer(MapAttribute):

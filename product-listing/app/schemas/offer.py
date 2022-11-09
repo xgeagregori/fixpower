@@ -1,18 +1,22 @@
 from pydantic import BaseModel
+from enum import Enum
 from typing import Optional
+
 
 from datetime import datetime
 
 
-class OfferBase(BaseModel):
+class OfferState(str, Enum):
+    accepted = "ACCEPTED"
+    declined = "DECLINED"
+    pending = "PENDING"
+
+
+class OfferCreate(BaseModel):
     sender: str
     recipient: str
-    price: Optional[float]
+    price: float
 
 
-class OfferCreate(OfferBase):
-    pass
-
-
-class OfferUpdate(OfferCreate):
-    pass
+class OfferUpdate(BaseModel):
+    state: OfferState

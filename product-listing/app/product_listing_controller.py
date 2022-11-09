@@ -11,7 +11,7 @@ from app.schemas.offer import OfferCreate, OfferUpdate
 
 
 app = FastAPI(
-    # root_path="/prod/product-listing-api/v1",
+    root_path="/prod/product-listing-api/v1",
     title="Product Listing API",
     version="1.0.0",
 )
@@ -77,33 +77,58 @@ class ProductListingController:
         )
         return {"id": product_listing_id}
 
-    @app.post("/product-listings/{product_listing_id}/offers", status_code=status.HTTP_201_CREATED, tags=["offers"])
-    def add_offer(product_listing_id: str, offer_create: OfferCreate, self=Depends(OfferDep)):
-        """add offer"""
-        offer_id = self.offer_service.add_offer(
-            product_listing_id, offer_create)
+    @app.post(
+        "/product-listings/{product_listing_id}/offers",
+        status_code=status.HTTP_201_CREATED,
+        tags=["offers"],
+    )
+    def create_offer(
+        product_listing_id: str, offer_create: OfferCreate, self=Depends(OfferDep)
+    ):
+        """Create offer"""
+        offer_id = self.offer_service.create_offer(product_listing_id, offer_create)
         return {"id": offer_id}
 
-    @app.get("/product-listings/{product_listing_id}/accept_offer")
-    def accept_offer(product_listing_id: str, self=Depends(OfferDep)):
-        """accept offer"""
-        offer = self.offer_service.accept_offer(
-            product_listing_id)
+    @app.get("/product-listings/{product_listing_id}/offers", tags=["offers"])
+    def get_offers_by_product_listing_id(
+        product_listing_id: str, self=Depends(OfferDep)
+    ):
+        """Get offers by product listing id"""
+        offers = self.offer_service.get_offers_by_product_listing_id(product_listing_id)
+        return [offer.attribute_values for offer in offers]
+
+    @app.get(
+        "/product-listings/{product_listing_id}/offers/{offer_id}", tags=["offers"]
+    )
+    def get_offer_by_id(product_listing_id: str, offer_id: str, self=Depends(OfferDep)):
+        """Get offer by id"""
+        offer = self.offer_service.get_offer_by_id(product_listing_id, offer_id)
         return offer.attribute_values
 
-    @app.get("/product-listings/{product_listing_id}/decline_offer")
-    def decline_offer(product_listing_id: str, self=Depends(OfferDep)):
-        """decline offer"""
-        offer = self.offer_service.decline_offer(
-            product_listing_id)
+    @app.patch(
+        "/product-listings/{product_listing_id}/offers/{offer_id}", tags=["offers"]
+    )
+    def update_offer_by_id(
+        product_listing_id: str,
+        offer_id: str,
+        offer_update: OfferUpdate,
+        self=Depends(OfferDep),
+    ):
+        """Update offer"""
+        offer = self.offer_service.update_offer_by_id(
+            product_listing_id, offer_id, offer_update
+        )
         return offer.attribute_values
 
-    @app.post("/product-listings/{product_listing_id}/counter_offer", status_code=status.HTTP_201_CREATED, tags=["offers"])
-    def counter_offer(product_listing_id: str, offer_update: OfferUpdate, self=Depends(OfferDep)):
-        """counter offer"""
-        product_listing = self.offer_service.counter_offer(
-            product_listing_id, offer_update)
-        return product_listing.attribute_values
+    @app.delete(
+        "/product-listings/{product_listing_id}/offers/{offer_id}", tags=["offers"]
+    )
+    def delete_offer_by_id(
+        product_listing_id: str, offer_id: str, self=Depends(OfferDep)
+    ):
+        """Delete offer"""
+        offer_id = self.offer_service.delete_offer_by_id(product_listing_id, offer_id)
+        return {"id": offer_id}
 
 
 app.include_router(router)

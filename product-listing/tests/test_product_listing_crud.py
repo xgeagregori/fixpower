@@ -47,7 +47,8 @@ class TestSuiteProductListingCRUD:
     def test_get_product_listing_by_id(self):
         response = client.get("/product-listings/testID")
         assert response.status_code == 200
-        assert response.json() == {"id": "testID", "listed_price": 12.3}
+        assert response.json()["id"] == "testID"
+        assert response.json()["listed_price"] == 12.3
 
     def test_get_product_listing_by_id_not_found(self):
         response = client.get(
@@ -65,7 +66,7 @@ class TestSuiteProductListingCRUD:
         assert response.json()["listed_price"] == 1200.0
 
     def test_delete_product_listing_by_id(self):
-        for id in ValueStorageProductListingCRUD.product_listing_ids:
-            response = client.delete(f"/product-listings/{id}")
+        for product_listing_id in ValueStorageProductListingCRUD.product_listing_ids:
+            response = client.delete(f"/product-listings/{product_listing_id}")
             assert response.status_code == 200
-            assert response.json() == {"id": id}
+            assert response.json() == {"id": product_listing_id}
