@@ -21,12 +21,12 @@ class OrderServiceImpl(OrderService):
             return Order.scan()
         except Order.ScanError:
             raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND, detail="No Order found",
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="No Order found",
             )
 
     def get_order_by_id(self, order_id: str):
         try:
-            print(order_id)
             order = Order.get(order_id)
             return order
         except DoesNotExist:
@@ -48,7 +48,6 @@ class OrderServiceImpl(OrderService):
 
         if order is not None:
             try:
-                # Delete operation
                 order.delete()
                 return order.id
             except DeleteError:

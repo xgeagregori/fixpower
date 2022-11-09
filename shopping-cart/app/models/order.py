@@ -2,11 +2,11 @@ from pynamodb.models import Model
 from pynamodb.attributes import (
     UnicodeAttribute,
     UTCDateTimeAttribute,
-    MapAttribute,
     NumberAttribute,
 )
 
 from app.models.user import UserAttribute
+
 import datetime
 import os
 

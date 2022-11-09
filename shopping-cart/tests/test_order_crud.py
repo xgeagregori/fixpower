@@ -16,7 +16,7 @@ class TestSuiteOrderCRUD:
         user_response = requests.post(
             os.getenv("AWS_API_GATEWAY_URL") + "/user-api/v1/register",
             json={
-                "username": "testUsernameOrder34",
+                "username": "testUsernameOrder",
                 "email": "testOrder@example.com",
                 "password": "testPasswordOrder",
             },
@@ -34,16 +34,8 @@ class TestSuiteOrderCRUD:
         assert "id" in response.json()
         ValueStorageOrderCRUD.order_id = response.json()["id"]
 
-    # def test_create_order_with_existing_id(self):
-    #     response = client.post(
-    #         "/shopping-carts",
-    #         json={"user": {"id": ValueStorageOrderCRUD.user_id}, "price": "10"},
-    #     )
-    #     assert response.status_code == 422
-    #     assert response.json()=={"detail":"Order id already exists"}
-
     def test_get_orders(self):
-        response = client.get("/shopping-carts/")
+        response = client.get("/shopping-carts")
         assert response.status_code == 200
         assert len(response.json()) >= 1
 
@@ -69,20 +61,10 @@ class TestSuiteOrderCRUD:
         assert "user" in response.json()
         assert "created_at" in response.json()
 
-    def test_update_order_by_id_not_found(self):
-        response = client.patch(f"/shopping-carts/xyz", json={"price": 20.4})
-        assert response.status_code == 404
-        assert response.json() == {"detail": "Order not found"}
-
     def test_delete_order_by_id(self):
         response = client.delete(f"/shopping-carts/{ValueStorageOrderCRUD.order_id}")
         assert response.status_code == 200
         assert response.json()["id"] == ValueStorageOrderCRUD.order_id
-
-    def test_delete_order_not_found(self):
-        response = client.delete(f"/shopping-carts/idNotFound")
-        assert response.status_code == 404
-        assert response.json() == {"detail": "Order not found"}
 
     # def test_delete_user(self):
     #     user_response = requests.delete(
