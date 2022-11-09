@@ -58,9 +58,7 @@ class TestSuiteOfferCRUD:
 
         assert response.status_code == 200
         assert "access_token" in response.json()
-        ValueStorageOfferCRUD.access_token_admin = response.json()[
-            "access_token"
-        ]
+        ValueStorageOfferCRUD.access_token_admin = response.json()["access_token"]
 
     def test_login(self):
         response = client.post(
