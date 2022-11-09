@@ -11,12 +11,13 @@ class ValueStorageOrderCRUD:
     user_id = None
 
 
+
 class TestSuiteOrderCRUD:
     def test_create_user(self):
         user_response = requests.post(
             os.getenv("API_GATEWAY_URL") + "/user-api/v1/register",
             json={
-                "username": "testUsernameOrder31",
+                "username": "testUsernameOrder32",
                 "email": "testOrder@example.com",
                 "password": "testPasswordOrder",
             },
