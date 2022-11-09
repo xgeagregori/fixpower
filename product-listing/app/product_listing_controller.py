@@ -32,7 +32,6 @@ router = InferringRouter()
 class ProductListingController:
     @app.post("/login", tags=["auth"])
     def login(form_data: OAuth2PasswordRequestForm = Depends()):
-        print(os.getenv("AWS_API_GATEWAY_URL"))
         token_response = requests.post(
             os.getenv("AWS_API_GATEWAY_URL") + "/user-api/v1/login",
             data=dict(username=form_data.username, password=form_data.password),
