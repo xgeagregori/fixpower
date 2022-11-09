@@ -2,13 +2,10 @@ from pydantic import BaseModel
 from typing import Optional
 
 
-class ProductListingBase(BaseModel):
+class ProductListingCreate(BaseModel):
+    id: Optional[str]
     listed_price: float
 
 
-class ProductListingCreate(ProductListingBase):
-    id: Optional[str]
-
-
-class ProductListingUpdate(ProductListingBase):
+class ProductListingUpdate(BaseModel):
     listed_price: Optional[float]
