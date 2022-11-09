@@ -15,7 +15,7 @@ class ValueStorageOrderCRUD:
 class TestSuiteOrderCRUD:
     def test_create_user(self):
         user_response = requests.post(
-            os.getenv("API_GATEWAY_URL") + "/user-api/v1/register",
+            os.getenv("AWS_API_GATEWAY_URL") + "/user-api/v1/register",
             json={
                 "username": "testUsernameOrder32",
                 "email": "testOrder@example.com",
