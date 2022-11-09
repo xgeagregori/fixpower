@@ -12,21 +12,34 @@ class ValueStorageTransactionCRUD:
 class TestSuiteTransactionCRUD:
     def test_create_transaction_with_id(self):
         response = client.post(
-            "/transactions", json={"id": "testID", "state": "testState",},
+            "/transactions",
+            json={
+                "id": "testID",
+                "state": "testState",
+            },
         )
         assert response.status_code == 201
         assert response.json()["id"] == "testID"
         ValueStorageTransactionCRUD.transaction_ids.append("testID")
 
     def test_create_transaction_without_id(self):
-        response = client.post("/transactions", json={"state": "testState",},)
+        response = client.post(
+            "/transactions",
+            json={
+                "state": "testState",
+            },
+        )
         assert response.status_code == 201
         assert "id" in response.json()
         ValueStorageTransactionCRUD.transaction_ids.append(response.json()["id"])
 
     def test_create_transaction_with_existing_id(self):
         response = client.post(
-            "/transactions", json={"id": "testID", "state": "testState",},
+            "/transactions",
+            json={
+                "id": "testID",
+                "state": "testState",
+            },
         )
         assert response.status_code == 400
         assert response.json() == {"detail": "Transaction already exists"}
@@ -34,7 +47,7 @@ class TestSuiteTransactionCRUD:
     def test_get_transactions(self):
         response = client.get("/transactions")
         assert response.status_code == 200
-        # assert len(response.json()) >= 2
+        assert len(response.json()) >= 2
 
     def test_get_transaction_by_id(self):
         response = client.get("/transactions/testID")
@@ -50,26 +63,18 @@ class TestSuiteTransactionCRUD:
 
     def test_update_transaction_by_id(self):
         response = client.patch(
-            "/transactions/testID", json={"state": "testStateUpdated",}
+            "/transactions/testID",
+            json={
+                "state": "testStateUpdated",
+            },
         )
         assert response.status_code == 200
         assert response.json()["id"] == "testID"
         assert response.json()["state"] == "testStateUpdated"
         assert "created_at" in response.json()
 
-    def test_update_transaction_by_id_not_found(self):
-        response = client.patch(
-            "/transactions/notFoundID", json={"state": "testStateUpdated",},
-        )
-        assert response.status_code == 404
-        assert response.json() == {"detail": "Transaction not found"}
-
     def test_delete_transaction_by_id(self):
-        response = client.delete("/transactions/testID")
-        assert response.status_code == 200
-        assert response.json()["id"] == "testID"
-
-    def test_delete_transaction_not_found(self):
-        response = client.delete("/transactions/notFoundID")
-        assert response.status_code == 404
-        assert response.json() == {"detail": "Transaction not found"}
+        for transaction_id in ValueStorageTransactionCRUD.transaction_ids:
+            response = client.delete(f"/transactions/{transaction_id}")
+            assert response.status_code == 200
+            assert "id" in response.json()

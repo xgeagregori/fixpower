@@ -2,13 +2,10 @@ from pydantic import BaseModel
 from typing import Optional
 
 
-class TransactionBase(BaseModel):
+class TransactionCreate(BaseModel):
+    id: Optional[str]
     state: str
 
 
-class TransactionCreate(TransactionBase):
-    id: Optional[str]
-
-
-class TransactionUpdate(TransactionBase):
+class TransactionUpdate(BaseModel):
     state: Optional[str]

@@ -1,16 +1,14 @@
 from fastapi import FastAPI, Depends, status, HTTPException
 from mangum import Mangum
 
-from fastapi_utils.inferring_router import InferringRouter
 from fastapi_utils.cbv import cbv
+from fastapi_utils.inferring_router import InferringRouter
 
 from app.dependencies.transaction import TransactionDep
 from app.schemas.transaction import TransactionCreate, TransactionUpdate
-from app.services.transaction_service import TransactionService
-from app.services.transaction_service_impl import TransactionServiceImpl
 
 app = FastAPI(
-    ##root_path="/prod/transaction-api/v1",
+    root_path="/prod/transaction-api/v1",
     title="Transaction API",
     version="1.0.0",
 )
@@ -43,7 +41,6 @@ class TransactionController:
     def get_transaction_by_id(transaction_id: str, self=Depends(TransactionDep)):
         """Get transaction by id."""
         transaction = self.transaction_service.get_transaction_by_id(transaction_id)
-        # return transaction
         return {"id": transaction.id, **transaction.attribute_values}
 
     @app.patch("/transactions/{transaction_id}")
