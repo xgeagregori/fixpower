@@ -84,32 +84,46 @@ class TestSuiteOrderCRUD:
     def test_create_order_with_id(self):
         response = client.post(
             "/shopping-carts",
-            json={"user": {"id": ValueStorageOrderCRUD.user_id}, "price": 10.1},
+            json={"user": {"id": ValueStorageOrderCRUD.user_ids[1]}, "price": 10.1},
+            headers={"Authorization": "Bearer " + ValueStorageOrderCRUD.access_token},
         )
         assert response.status_code == 201
         assert "id" in response.json()
         ValueStorageOrderCRUD.order_id = response.json()["id"]
 
     def test_get_orders(self):
-        response = client.get("/shopping-carts")
+        response = client.get(
+            "/shopping-carts",
+            headers={
+                "Authorization": "Bearer " + ValueStorageOrderCRUD.access_token_admin
+            },
+        )
         assert response.status_code == 200
         assert len(response.json()) >= 1
 
     def test_get_order_by_id(self):
-        response = client.get(f"/shopping-carts/{ValueStorageOrderCRUD.order_id}")
+        response = client.get(
+            f"/shopping-carts/{ValueStorageOrderCRUD.order_id}",
+            headers={"Authorization": "Bearer " + ValueStorageOrderCRUD.access_token},
+        )
         assert response.status_code == 200
         assert "user" in response.json()
         assert "price" in response.json()
         assert "created_at" in response.json()
 
     def test_get_order_not_found(self):
-        response = client.get("/shopping-carts/notFoundID")
+        response = client.get(
+            "/shopping-carts/notFoundID",
+            headers={"Authorization": "Bearer " + ValueStorageOrderCRUD.access_token},
+        )
         assert response.status_code == 404
         assert response.json() == {"detail": "Order not found"}
 
     def test_update_order_by_id(self):
         response = client.patch(
-            f"/shopping-carts/{ValueStorageOrderCRUD.order_id}", json={"price": 20.0}
+            f"/shopping-carts/{ValueStorageOrderCRUD.order_id}",
+            json={"price": 20.0},
+            headers={"Authorization": "Bearer " + ValueStorageOrderCRUD.access_token},
         )
         assert response.status_code == 200
         assert response.json()["id"] == ValueStorageOrderCRUD.order_id
@@ -118,7 +132,10 @@ class TestSuiteOrderCRUD:
         assert "created_at" in response.json()
 
     def test_delete_order_by_id(self):
-        response = client.delete(f"/shopping-carts/{ValueStorageOrderCRUD.order_id}")
+        response = client.delete(
+            f"/shopping-carts/{ValueStorageOrderCRUD.order_id}",
+            headers={"Authorization": "Bearer " + ValueStorageOrderCRUD.access_token},
+        )
         assert response.status_code == 200
         assert response.json()["id"] == ValueStorageOrderCRUD.order_id
 
