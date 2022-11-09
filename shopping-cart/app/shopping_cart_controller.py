@@ -45,5 +45,20 @@ class ShoppingCartController:
         # return order
         return {"id": order.id, **order.attribute_values}
 
+    @app.patch("/shopping-carts/{order_id}")
+    def update_order_by_id(
+        order_id: str, order_update: OrderUpdate, self=Depends(OrderDep)
+    ):
+        """Update order by id"""
+        order = self.order_service.update_order_by_id(order_id, order_update)
+        return order.attribute_values
+
+    @app.delete("/shopping-carts/{order_id}")
+    def delete_order_by_id(order_id: str, self=Depends(OrderDep)):
+        """Delete order by id."""
+        order_id = self.order_service.delete_order_by_id(order_id)
+
+        return {"id": order_id}
+
 
 app.include_router(router)

@@ -33,3 +33,29 @@ class OrderServiceImpl(OrderService):
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND, detail="Order not found"
             )
+
+    def update_order_by_id(self, order_id: str, order_update: OrderUpdate):
+        order = self.get_order_by_id(order_id)
+        for key, value in order_update.dict().items():
+            if value:
+                setattr(order, key, value)
+
+        order.save()
+        return order
+
+    def delete_order_by_id(self, order_id: str):
+        order = self.get_order_by_id(order_id)
+
+        if order is not None:
+            try:
+                # Delete operation
+                order.delete()
+                return order.id
+            except DeleteError:
+                raise HTTPException(
+                    status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                    detail="Error on deletion",
+                )
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Order not found"
+        )

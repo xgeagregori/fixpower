@@ -6,8 +6,8 @@ from app.schemas.user import UserCreate
 
 class OrderCreate(BaseModel):
     user: UserCreate
-    price: int
+    price: float
 
 
 class OrderUpdate(BaseModel):
-    price: Optional[str]
+    price: Optional[float]
