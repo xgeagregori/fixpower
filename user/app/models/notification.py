@@ -9,5 +9,3 @@ class Notification(MapAttribute):
     title = UnicodeAttribute()
     message = UnicodeAttribute()
     created_at = UTCDateTimeAttribute(default=datetime.datetime.now)
-    
-    
