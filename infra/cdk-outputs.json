@@ -1,25 +1,26 @@
 {
   "ProductListingStack": {
-    "ProductListingLambdaArn": "arn:aws:lambda:us-east-1:209878669546:function:ProductListingStack-ProductListingApi1FC08E58-wx7oLeDUTthZ",
-    "ProductListingTableName": "ProductListingStack-ProductListingsEEA93C2B-FM2CUZPTSFLL",
-    "ExportsOutputFnGetAttProductListingApi1FC08E58ArnD0C4C088": "arn:aws:lambda:us-east-1:209878669546:function:ProductListingStack-ProductListingApi1FC08E58-wx7oLeDUTthZ"
+    "ProductListingLambdaArn": "arn:aws:lambda:us-east-1:209878669546:function:ProductListingStack-ProductListingApi1FC08E58-rkkXogiTt0vM",
+    "ProductListingTableName": "ProductListingStack-ProductListingsEEA93C2B-QDCW7T260C70",
+    "ExportsOutputFnGetAttProductListingApi1FC08E58ArnD0C4C088": "arn:aws:lambda:us-east-1:209878669546:function:ProductListingStack-ProductListingApi1FC08E58-rkkXogiTt0vM"
   },
   "ShoppingCartStack": {
-    "ShoppingCartLambdaArn": "arn:aws:lambda:us-east-1:209878669546:function:ShoppingCartStack-ShoppingCartApiCD5E707C-L6WF4tWCx1Uq",
-    "ShoppingCartTableName": "ShoppingCartStack-ShoppingCarts1D2D12C8-I51LZ1BK0348",
-    "ExportsOutputFnGetAttShoppingCartApiCD5E707CArnD03F5746": "arn:aws:lambda:us-east-1:209878669546:function:ShoppingCartStack-ShoppingCartApiCD5E707C-L6WF4tWCx1Uq"
+    "ShoppingCartLambdaArn": "arn:aws:lambda:us-east-1:209878669546:function:ShoppingCartStack-ShoppingCartApiCD5E707C-8trSXR17AUV5",
+    "ShoppingCartTableName": "ShoppingCartStack-ShoppingCarts1D2D12C8-YE8KX3V1IHXI",
+    "ExportsOutputFnGetAttShoppingCartApiCD5E707CArnD03F5746": "arn:aws:lambda:us-east-1:209878669546:function:ShoppingCartStack-ShoppingCartApiCD5E707C-8trSXR17AUV5"
   },
   "TransactionStack": {
-    "TransactionTableName": "TransactionStack-Transactions098C5767-1HOP1P9FWV68G",
-    "ExportsOutputFnGetAtttransactionApiA335EB4BArn1E14F066": "arn:aws:lambda:us-east-1:209878669546:function:TransactionStack-transactionApiA335EB4B-Z20xFMMRj8DG",
-    "TransactionLambdaArn": "arn:aws:lambda:us-east-1:209878669546:function:TransactionStack-transactionApiA335EB4B-Z20xFMMRj8DG"
+    "TransactionTableName": "TransactionStack-Transactions098C5767-BYOPWFC7TG78",
+    "ExportsOutputFnGetAtttransactionApiA335EB4BArn1E14F066": "arn:aws:lambda:us-east-1:209878669546:function:TransactionStack-transactionApiA335EB4B-RLq4Omzlj4Up",
+    "TransactionLambdaArn": "arn:aws:lambda:us-east-1:209878669546:function:TransactionStack-transactionApiA335EB4B-RLq4Omzlj4Up"
   },
   "UserStack": {
-    "ExportsOutputFnGetAttuserApi95DFCEA1Arn10AC0BDB": "arn:aws:lambda:us-east-1:209878669546:function:UserStack-userApi95DFCEA1-ZX3PJNUXdtCs",
-    "UserTableName": "UserStack-Users0A0EEA89-1I0Z1481VSMHK",
-    "UserLambdaArn": "arn:aws:lambda:us-east-1:209878669546:function:UserStack-userApi95DFCEA1-ZX3PJNUXdtCs"
+    "ExportsOutputFnGetAttuserApi95DFCEA1Arn10AC0BDB": "arn:aws:lambda:us-east-1:209878669546:function:UserStack-userApi95DFCEA1-sZ5hICa5hiGP",
+    "UserTableName": "UserStack-Users0A0EEA89-15LX88FINKIZ7",
+    "UserLambdaArn": "arn:aws:lambda:us-east-1:209878669546:function:UserStack-userApi95DFCEA1-sZ5hICa5hiGP"
   },
   "ApiStack": {
-    "RestApiEndpoint0551178A": "https://1riyssfaf9.execute-api.us-east-1.amazonaws.com/prod/"
+    "ApiGatewayUrl": "https://luoqojaiub.execute-api.us-east-1.amazonaws.com/prod/",
+    "RestApiEndpoint0551178A": "https://luoqojaiub.execute-api.us-east-1.amazonaws.com/prod/"
   }
 }
