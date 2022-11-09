@@ -1,7 +1,9 @@
 from pydantic import BaseModel
 from typing import Optional
 
-from app.schemas.user import UserCreate
+from app.schemas.user import UserCreate, UserOut
+
+from datetime import datetime
 
 
 class OrderCreate(BaseModel):
@@ -11,3 +13,10 @@ class OrderCreate(BaseModel):
 
 class OrderUpdate(BaseModel):
     price: Optional[float]
+
+
+class OrderOut(BaseModel):
+    id: str
+    user: UserOut
+    price: float
+    created_at: datetime

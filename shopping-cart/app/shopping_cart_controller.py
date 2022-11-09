@@ -6,7 +6,9 @@ from fastapi_utils.cbv import cbv
 
 
 from app.dependencies.order import OrderDep
-from app.schemas.order import OrderCreate, OrderUpdate
+from app.schemas.order import OrderCreate, OrderUpdate, OrderOut
+from app.schemas.user import UserOut
+
 from app.services.order_service import OrderService
 from app.services.order_service_impl import OrderServiceImpl
 
@@ -36,14 +38,25 @@ class ShoppingCartController:
     def get_orders(self=Depends(OrderDep)):
         """Get all orders"""
         orders = self.order_service.get_orders()
+        # Remove hashed_password from response
+        formatted_orders = []
+        for order in orders:
+
+            order.user = UserOut(**order.user.attribute_values)
+            formatted_order = OrderOut(**order.attribute_values)
+            formatted_orders.append(formatted_order)
+
+        return formatted_orders
+
         return [orders.attribute_values for orders in orders]
 
     @app.get("/shopping-carts/{order_id}")
     def get_order_by_id(order_id: str, self=Depends(OrderDep)):
         """Get Order by id."""
         order = self.order_service.get_order_by_id(order_id)
-        # return order
-        return {"id": order.id, **order.attribute_values}
+        order.user = UserOut(**order.user.attribute_values)
+        formatted_order = OrderOut(**order.attribute_values)
+        return formatted_order
 
     @app.patch("/shopping-carts/{order_id}")
     def update_order_by_id(

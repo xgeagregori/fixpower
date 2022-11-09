@@ -11,13 +11,12 @@ class ValueStorageOrderCRUD:
     user_id = None
 
 
-
 class TestSuiteOrderCRUD:
     def test_create_user(self):
         user_response = requests.post(
             os.getenv("AWS_API_GATEWAY_URL") + "/user-api/v1/register",
             json={
-                "username": "testUsernameOrder32",
+                "username": "testUsernameOrder34",
                 "email": "testOrder@example.com",
                 "password": "testPasswordOrder",
             },
@@ -46,6 +45,7 @@ class TestSuiteOrderCRUD:
     def test_get_orders(self):
         response = client.get("/shopping-carts/")
         assert response.status_code == 200
+        assert len(response.json()) >= 1
 
     def test_get_order_by_id(self):
         response = client.get(f"/shopping-carts/{ValueStorageOrderCRUD.order_id}")
