@@ -17,6 +17,7 @@ class ValueStorageProductListingCRUD:
 
 class TestSuiteProductListingCRUD:
     def test_create_user_admin(self):
+        print(os.getenv("AWS_API_GATEWAY_URL"))
         user_response = requests.post(
             os.getenv("AWS_API_GATEWAY_URL") + "/user-api/v1/register",
             json={
