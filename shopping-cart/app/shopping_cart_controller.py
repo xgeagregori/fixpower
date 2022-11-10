@@ -99,7 +99,9 @@ class ShoppingCartController:
         return order.attribute_values
 
     @app.delete("/shopping-carts/{order_id}", tags=["shopping-carts"])
-    def delete_order_by_id(order_id: str, self=Depends(OrderDep)):
+    def delete_order_by_id(
+        order_id: str, current_user=Depends(get_current_user), self=Depends(OrderDep)
+    ):
         """Delete order by id"""
         order_id = self.order_service.delete_order_by_id(order_id)
 
