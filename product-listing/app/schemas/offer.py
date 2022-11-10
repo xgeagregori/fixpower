@@ -1,9 +1,6 @@
 from pydantic import BaseModel
 from enum import Enum
-from typing import Optional
 
-
-from datetime import datetime
 
 
 class OfferState(str, Enum):

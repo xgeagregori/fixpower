@@ -1,7 +1,8 @@
 from pynamodb.models import Model
-from pynamodb.attributes import UnicodeAttribute, NumberAttribute, ListAttribute, BooleanAttribute
+from pynamodb.attributes import UnicodeAttribute, NumberAttribute, ListAttribute, BooleanAttribute, MapAttribute
 
 from app.models.offer import Offer
+from app.models.product import Product
 
 import os
 
@@ -16,3 +17,4 @@ class ProductListing(Model):
     listed_price = NumberAttribute()
     offers = ListAttribute(of=Offer, default=[])
     sold = BooleanAttribute(default=False)
+    product = Product(default={})

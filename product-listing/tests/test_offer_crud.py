@@ -59,6 +59,7 @@ class TestSuiteOfferCRUD:
             json={"state": "ACCEPTED"},
         )
         assert response.status_code == 200
+        print(response.json())
         assert response.json()["id"] == ValueStorageOfferCRUD.offer_id
         assert response.json()["state"] == "ACCEPTED"
 

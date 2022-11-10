@@ -49,9 +49,9 @@ class OfferServiceImpl(OfferService):
         )
         for offer in product_listing.offers:
             if offer.id == offer_id:
-                if offer_update.state == "Accepted":
+                if offer_update.state == OfferState.accepted:
                     if product_listing.sold:
-                            raise HTTPException(
+                        raise HTTPException(
                             status_code=status.HTTP_400_BAD_REQUEST, detail="Product already sold"
                         )
                     else:

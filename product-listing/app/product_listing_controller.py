@@ -6,12 +6,13 @@ from fastapi_utils.cbv import cbv
 
 from app.dependencies.product_listing import ProductListingDep
 from app.dependencies.offer import OfferDep
+from app.dependencies.product import ProductDep
 from app.schemas.product_listing import ProductListingCreate, ProductListingUpdate
 from app.schemas.offer import OfferCreate, OfferUpdate
-
+from app.schemas.product import ProductCreate, ProductCategory
 
 app = FastAPI(
-    root_path="/prod/product-listing-api/v1",
+    # root_path="/prod/product-listing-api/v1",
     title="Product Listing API",
     version="1.0.0",
 )
@@ -130,5 +131,16 @@ class ProductListingController:
         offer_id = self.offer_service.delete_offer_by_id(product_listing_id, offer_id)
         return {"id": offer_id}
 
+    @app.post(
+        "/product-listings/{product_listing_id}/{product_category}",
+        status_code=status.HTTP_201_CREATED,
+        tags=["product"],
+    )
+    def create_product(
+        product_listing_id: str, product_category: ProductCategory, product_create: ProductCreate, self=Depends(ProductDep)
+    ):
+        """Create product"""
+        product_id = self.product_service.create_product(product_listing_id, product_category, product_create)
+        return {"id": product_id}
 
 app.include_router(router)
