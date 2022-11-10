@@ -21,7 +21,7 @@ import requests
 
 
 app = FastAPI(
-    root_path="/prod/shopping-cart-api/v1",
+    # root_path="/prod/shopping-cart-api/v1",
     title="Shopping Cart API",
     version="1.0.0",
 )
@@ -49,7 +49,7 @@ class ShoppingCartController:
     @app.post(
         "/shopping-carts", status_code=status.HTTP_201_CREATED, tags=["shopping-carts"]
     )
-    def create_order(order_create: OrderCreate, self=Depends(OrderDep)):
+    def create_order(order_create: OrderCreate, current_user=Depends(get_current_user), self=Depends(OrderDep)):
         """Create order"""
         order_id = self.order_service.create_order(order_create)
         if order_id is None:
@@ -60,7 +60,7 @@ class ShoppingCartController:
         return {"id": order_id}
 
     @app.get("/shopping-carts", tags=["shopping-carts"])
-    def get_orders(self=Depends(OrderDep)):
+    def get_orders(current_user=Depends(get_current_user), self=Depends(OrderDep)):
         """Get orders"""
         orders = self.order_service.get_orders()
 
@@ -74,7 +74,7 @@ class ShoppingCartController:
         return formatted_orders
 
     @app.get("/shopping-carts/{order_id}", tags=["shopping-carts"])
-    def get_order_by_id(order_id: str, self=Depends(OrderDep)):
+    def get_order_by_id(order_id: str, current_user=Depends(get_current_user), self=Depends(OrderDep)):
         """Get Order by id"""
         order = self.order_service.get_order_by_id(order_id)
         order.user = UserOut(**order.user.attribute_values)
@@ -83,7 +83,7 @@ class ShoppingCartController:
 
     @app.patch("/shopping-carts/{order_id}", tags=["shopping-carts"])
     def update_order_by_id(
-        order_id: str, order_update: OrderUpdate, self=Depends(OrderDep)
+        order_id: str, order_update: OrderUpdate, current_user=Depends(get_current_user), self=Depends(OrderDep)
     ):
         """Update order by id"""
         order = self.order_service.update_order_by_id(order_id, order_update)

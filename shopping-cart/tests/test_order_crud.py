@@ -70,18 +70,7 @@ class TestSuiteOrderCRUD:
         assert "access_token" in response.json()
         ValueStorageOrderCRUD.access_token = response.json()["access_token"]
 
-    def test_get_orders(self):
-        response = client.get(
-            "/shopping-carts",
-            headers={
-                "Authorization": "Bearer " + ValueStorageOrderCRUD.access_token_admin
-            },
-        )
-
-        assert response.status_code == 200
-        assert response.json() == {"message": "Welcome to the Shopping Cart Service!"}
-
-    def test_create_order_with_id(self):
+    def test_create_order(self):
         response = client.post(
             "/shopping-carts",
             json={"user": {"id": ValueStorageOrderCRUD.user_ids[1]}, "price": 10.1},
