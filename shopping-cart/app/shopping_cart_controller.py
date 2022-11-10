@@ -96,7 +96,7 @@ class ShoppingCartController:
     ):
         """Update order by id"""
         order = self.order_service.update_order_by_id(order_id, order_update)
-        
+
         order.user = UserOut(**order.user.attribute_values)
         formatted_order = OrderOut(**order.attribute_values)
         return formatted_order
