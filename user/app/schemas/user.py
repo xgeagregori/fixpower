@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from typing import Optional
+from typing import Optional, List
 
 from app.schemas.profile import ProfileCreate, ProfileInDB, ProfileOut
 
@@ -42,4 +42,14 @@ class UserOut(BaseModel):
     email: str
     is_admin: bool
     profile: ProfileOut
+    created_at: datetime
+
+
+class UserOutCurrent(BaseModel):
+    id: str
+    username: str
+    email: str
+    is_admin: bool
+    profile: ProfileOut
+    notifications: list
     created_at: datetime

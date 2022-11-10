@@ -15,8 +15,12 @@ from app.dependencies.user import UserDep
 from app.schemas.profile import ProfileUpdate, ProfileOut
 from app.schemas.review import ReviewCreate, ReviewUpdate
 from app.schemas.settings import SettingsOut
-from app.schemas.user import UserCreate, UserUpdate, UserInDB, UserOut
-from app.schemas.notification import NotificationCreate, NotificationUpdate
+from app.schemas.user import UserCreate, UserUpdate, UserInDB, UserOut, UserOutCurrent
+from app.schemas.notification import (
+    NotificationCreate,
+    NotificationUpdate,
+    NotificationOut,
+)
 
 app = FastAPI(
     root_path="/prod/user-api/v1",
@@ -80,7 +84,14 @@ class UserController:
     @app.get("/users/me", tags=["users"])
     def get_users(current_user: UserInDB = Depends(get_current_user)):
         """Get authenticated user"""
-        return current_user.attribute_values
+        for notification in current_user.notifications:
+            notification = NotificationOut(**notification.attribute_values)
+        current_user.profile.settings = SettingsOut(
+            **current_user.profile.settings.attribute_values
+        )
+        current_user.profile = ProfileOut(**current_user.profile.attribute_values)
+        formatted_user = UserOutCurrent(**current_user.attribute_values)
+        return formatted_user
 
     @app.get("/users/{user_id}", tags=["users"])
     def get_user_by_id(
@@ -105,7 +116,14 @@ class UserController:
         """Update user by id"""
         check_user_permissions(current_user, user_id)
         user = self.user_service.update_user_by_id(user_id, user_update)
-        return user.attribute_values
+
+        for notification in user.notifications:
+            notification = NotificationOut(**notification.attribute_values)
+        user.profile.settings = SettingsOut(**user.profile.settings.attribute_values)
+        user.profile = ProfileOut(**user.profile.attribute_values)
+
+        formatted_user = UserOutCurrent(**user.attribute_values)
+        return formatted_user
 
     @app.delete("/users/{user_id}", tags=["users"])
     def delete_user_by_id(

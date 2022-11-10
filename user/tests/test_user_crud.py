@@ -117,7 +117,7 @@ class TestSuiteUserCRUD:
         assert response.json()["username"] == "testUsername2"
         assert response.json()["email"] == "test2@example.com"
         assert "password" not in response.json()
-        assert "hashed_password" in response.json()
+        assert "hashed_password" not in response.json()
         assert "created_at" in response.json()
 
     def test_get_user_by_username_not_found(self):
@@ -185,7 +185,7 @@ class TestSuiteUserCRUD:
         assert response.json()["id"] == ValueStorageUserCRUD.user_id
         assert response.json()["email"] == "testUpdated@example.com"
         assert "password" not in response.json()
-        assert "hashed_password" in response.json()
+        assert "hashed_password" not in response.json()
         assert "created_at" in response.json()
 
     def test_delete_user_by_id_not_found(self):
