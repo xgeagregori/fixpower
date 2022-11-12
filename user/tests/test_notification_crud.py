@@ -47,7 +47,7 @@ class TestSuiteNotificationCRUD:
         assert "id" in response.json()
         ValueStorageNotificationCRUD.notification_id = response.json()["id"]
 
-    def test_get_notifications(self):
+    def test_get_notifications_by_user_id(self):
         response = client.get(
             f"/users/{ValueStorageNotificationCRUD.user_id}/notifications",
             headers={

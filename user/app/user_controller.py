@@ -17,15 +17,16 @@ from app.schemas.chat_message import (
     ChatMessageUpdate,
     ChatMessageOut,
 )
-from app.schemas.profile import ProfileUpdate, ProfileOut
-from app.schemas.review import ReviewCreate, ReviewUpdate, ReviewOut
-from app.schemas.settings import SettingsOut
-from app.schemas.user import UserCreate, UserUpdate, UserInDB, UserOut, UserOutCurrent
+from app.schemas.product_listing import ProductListingCreate, ProductListingOut
 from app.schemas.notification import (
     NotificationCreate,
     NotificationUpdate,
     NotificationOut,
 )
+from app.schemas.profile import ProfileUpdate, ProfileOut
+from app.schemas.review import ReviewCreate, ReviewUpdate, ReviewOut
+from app.schemas.settings import SettingsOut
+from app.schemas.user import UserCreate, UserUpdate, UserInDB, UserOut, UserOutCurrent
 
 app = FastAPI(
     root_path="/prod/user-api/v1",
@@ -77,6 +78,10 @@ class UserController:
         # Remove hashed_password from response
         formatted_users = []
         for user in users:
+            user.favourites = [
+                ProductListingOut(**favourite.attribute_values)
+                for favourite in user.favourites
+            ]
             user.profile.settings = SettingsOut(
                 **user.profile.settings.attribute_values
             )
@@ -89,8 +94,18 @@ class UserController:
     @app.get("/users/me", tags=["users"])
     def get_users(current_user: UserInDB = Depends(get_current_user)):
         """Get authenticated user"""
-        for notification in current_user.notifications:
-            notification = NotificationOut(**notification.attribute_values)
+        current_user.favourites = [
+            ProductListingOut(**favourite.attribute_values)
+            for favourite in current_user.favourites
+        ]
+        current_user.notifications = [
+            NotificationOut(**notification.attribute_values)
+            for notification in current_user.notifications
+        ]
+        current_user.chat_messages = [
+            ChatMessageOut(**chat_message.attribute_values)
+            for chat_message in current_user.chat_messages
+        ]
         current_user.profile.settings = SettingsOut(
             **current_user.profile.settings.attribute_values
         )
@@ -106,6 +121,10 @@ class UserController:
     ):
         """Get user by id"""
         user = self.user_service.get_user_by_id(user_id)
+        user.favourites = [
+            ProductListingOut(**favourite.attribute_values)
+            for favourite in user.favourites
+        ]
         user.profile.settings = SettingsOut(**user.profile.settings.attribute_values)
         user.profile = ProfileOut(**user.profile.attribute_values)
         formatted_user = UserOut(**user.attribute_values)
@@ -122,11 +141,20 @@ class UserController:
         check_user_permissions(current_user, user_id)
         user = self.user_service.update_user_by_id(user_id, user_update)
 
-        for notification in user.notifications:
-            notification = NotificationOut(**notification.attribute_values)
+        user.favourites = [
+            ProductListingOut(**favourite.attribute_values)
+            for favourite in user.favourites
+        ]
+        user.notifications = [
+            NotificationOut(**notification.attribute_values)
+            for notification in user.notifications
+        ]
+        user.chat_messages = [
+            ChatMessageOut(**chat_message.attribute_values)
+            for chat_message in user.chat_messages
+        ]
         user.profile.settings = SettingsOut(**user.profile.settings.attribute_values)
         user.profile = ProfileOut(**user.profile.attribute_values)
-
         formatted_user = UserOutCurrent(**user.attribute_values)
         return formatted_user
 
@@ -403,6 +431,53 @@ class UserController:
             user_id, chat_message_id
         )
         return {"id": chat_message_id}
+
+    # Favourite routes
+    @app.post(
+        "/users/{user_id}/favourites",
+        status_code=status.HTTP_201_CREATED,
+        tags=["favourites"],
+    )
+    def create_favourite(
+        user_id: str,
+        favourite_create: ProductListingCreate,
+        current_user: UserInDB = Depends(get_current_user),
+        self=Depends(UserDep),
+    ):
+        """Create favourite"""
+        # The sender of the favourite must be the current user
+        check_user_permissions(current_user, user_id)
+        favourite_id = self.favourite_service.create_favourite(
+            user_id, favourite_create
+        )
+        return {"id": favourite_id}
+
+    @app.get("/users/{user_id}/favourites", tags=["favourites"])
+    def get_favourites_by_user_id(
+        user_id: str,
+        current_user: UserInDB = Depends(get_current_user),
+        self=Depends(UserDep),
+    ):
+        """Get favourites for user"""
+        check_user_permissions(current_user, user_id)
+        favourites = self.favourite_service.get_favourites_by_user_id(user_id)
+        return [
+            ProductListingOut(**favourite.attribute_values) for favourite in favourites
+        ]
+
+    @app.delete("/users/{user_id}/favourites/{favourite_id}", tags=["favourites"])
+    def delete_favourite_by_id(
+        user_id: str,
+        favourite_id: str,
+        current_user: UserInDB = Depends(get_current_user),
+        self=Depends(UserDep),
+    ):
+        """Delete favourite by id for user"""
+        check_user_permissions(current_user, user_id)
+        favourite_id = self.favourite_service.delete_favourite_by_id(
+            user_id, favourite_id
+        )
+        return {"id": favourite_id}
 
 
 app.include_router(router)

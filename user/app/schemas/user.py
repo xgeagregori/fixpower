@@ -46,6 +46,7 @@ class UserOut(BaseModel):
     is_admin: bool
     is_banned: bool
     profile: ProfileOut
+    favourites: list
     created_at: datetime
 
 
@@ -56,6 +57,7 @@ class UserOutCurrent(BaseModel):
     is_admin: bool
     is_banned: bool
     profile: ProfileOut
+    favourites: list
     notifications: list
     chat_messages: list
     created_at: datetime

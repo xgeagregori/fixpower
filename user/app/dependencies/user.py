@@ -1,5 +1,7 @@
 from app.services.chat_message_service import ChatMessageService
 from app.services.chat_message_service_impl import ChatMessageServiceImpl
+from app.services.favourite_service import FavouriteService
+from app.services.favourite_service_impl import FavouriteServiceImpl
 from app.services.notification_service import NotificationService
 from app.services.notification_service_impl import NotificationServiceImpl
 from app.services.profile_service import ProfileService
@@ -15,6 +17,7 @@ class UserDep:
         self.user_service: UserService = UserServiceImpl()
 
         self.chat_message_service: ChatMessageService = ChatMessageServiceImpl()
+        self.favourite_service: FavouriteService = FavouriteServiceImpl()
         self.notification_service: NotificationService = NotificationServiceImpl()
         self.profile_service: ProfileService = ProfileServiceImpl()
         self.review_service: ReviewService = ReviewServiceImpl()
