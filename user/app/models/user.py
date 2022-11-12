@@ -37,6 +37,7 @@ class User(Model):
     profile = ProfileAttribute()
     notifications = ListAttribute(of=Notification, default=[])
     is_admin = BooleanAttribute()
+    is_banned = BooleanAttribute()
     created_at = UTCDateTimeAttribute(default=datetime.datetime.now)
 
     user_index = UserIndex()
