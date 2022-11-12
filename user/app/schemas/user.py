@@ -57,4 +57,5 @@ class UserOutCurrent(BaseModel):
     is_banned: bool
     profile: ProfileOut
     notifications: list
+    chat_messages: list
     created_at: datetime
