@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 
 from app.models.notifier import Notifier
+from app.services.user_service_impl import UserServiceImpl
 
 
 class NotifierDecorator(Notifier, ABC):
@@ -14,11 +15,17 @@ class NotifierDecorator(Notifier, ABC):
 
 
 class AppNotifier(Notifier):
+    def __init__(self, user_id):
+        self.user_id = user_id
+        self.user_service = UserServiceImpl()
+
     def send(self, notification):
         self.sendAppNotification(notification)
 
     def sendAppNotification(self, notification):
-        print("Sending app notification")
+        user = self.user_service.get_user_by_id(self.user_id)
+        user.notifications.append(notification)
+        user.save()
 
 
 class SMSNotifier(NotifierDecorator):
@@ -42,4 +49,4 @@ class EmailNotifier(NotifierDecorator):
         self.sendEmailNotification(notification)
 
     def sendEmailNotification(self, notification):
-        print("Sending email notification")
+        print("Sending Email notification")

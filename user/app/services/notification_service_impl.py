@@ -17,13 +17,11 @@ class NotificationServiceImpl(NotificationService):
         generated_id = str(uuid4())
         notification = Notification(id=generated_id, **notification_create.dict())
 
-        user = self.user_service.get_user_by_id(user_id)
-        user.notifications.append(notification)
-        user.save()
-
         # Send notification to user based on their settings
+        user = self.user_service.get_user_by_id(user_id)
         settings = user.profile.settings
-        notifier: Notifier = AppNotifier()
+
+        notifier: Notifier = AppNotifier(user_id)
         if settings.sms_notifications:
             notifier = SMSNotifier(notifier)
         if settings.email_notifications:

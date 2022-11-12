@@ -34,3 +34,4 @@ class ProfileOut(BaseModel):
     picture: Union[bytes, None]
     address: str
     settings: SettingsOut
+    reviews: list

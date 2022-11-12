@@ -14,7 +14,7 @@ from datetime import datetime, timedelta
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 
 
-def check_user_permissions(current_user: UserInDB, user_id: int):
+def check_user_permissions(current_user: UserInDB, user_id: str):
     if current_user.id != user_id and not current_user.is_admin:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
