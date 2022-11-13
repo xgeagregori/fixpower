@@ -14,25 +14,40 @@ class TestSuiteProductListingCRUD:
     def test_create_product_listing_with_id(self):
         response = client.post(
             "/product-listings",
-            json={"id": "testID", "listed_price": 12.3},
+            json={"id": "testID",
+                  "listed_price": 12.3,
+                  "product": {
+                      "name": "milk",
+                      "brand": "wahaha"}
+                  },
         )
         assert response.status_code == 201
         assert response.json() == {"id": "testID"}
-        ValueStorageProductListingCRUD.product_listing_ids.append(response.json()["id"])
+        ValueStorageProductListingCRUD.product_listing_ids.append(response.json()[
+                                                                  "id"])
 
     def test_create_product_listing_without_id(self):
         response = client.post(
             "/product-listings",
-            json={"listed_price": 3.45},
+            json={"listed_price": 3.45,"product": {
+                      "name": "milk",
+                      "brand": "wahaha"}
+                  },
         )
         assert response.status_code == 201
         assert "id" in response.json()
-        ValueStorageProductListingCRUD.product_listing_ids.append(response.json()["id"])
+        ValueStorageProductListingCRUD.product_listing_ids.append(response.json()[
+                                                                  "id"])
 
     def test_create_product_listing_already_exists_same_id(self):
         response = client.post(
             "/product-listings",
-            json={"id": "testID", "listed_price": 12.3},
+            json={"id": "testID",
+                  "listed_price": 10,
+                  "product": {
+                      "name": "milk",
+                      "brand": "wahaha"}
+                  },
         )
         assert response.status_code == 400
         assert response.json() == {"detail": "Product listing already exists"}

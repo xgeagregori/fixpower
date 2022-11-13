@@ -5,7 +5,7 @@ from pynamodb.attributes import (
 
 
 class Product(MapAttribute):
-    id = UnicodeAttribute(hash_key=True)
+    # id = UnicodeAttribute(hash_key=True)
     name = UnicodeAttribute()
     brand = UnicodeAttribute()
 

@@ -14,7 +14,12 @@ class TestSuiteOfferCRUD:
     def test_create_product_listing_with_id(self):
         response = client.post(
             "/product-listings",
-            json={"id": "testID", "listed_price": 12.3},
+            json={"id": "testID",
+                  "listed_price": 10,
+                  "product": {
+                        "name": "milk",
+                        "brand": "wahaha"}
+                  },
         )
         assert response.status_code == 201
         assert response.json() == {"id": "testID"}
@@ -23,7 +28,7 @@ class TestSuiteOfferCRUD:
     def test_create_offer(self):
         response = client.post(
             f"/product-listings/{ValueStorageOfferCRUD.product_listing_id}/offers",
-            json={"sender": "123", "recipient": "432", "price": 12.3},
+            json={"sender": {"id":"123"}, "recipient": {"id":"432"}, "price": 12.3},
         )
         assert response.status_code == 201
         assert "id" in response.json()
@@ -75,4 +80,5 @@ class TestSuiteOfferCRUD:
             f"/product-listings/{ValueStorageOfferCRUD.product_listing_id}"
         )
         assert response.status_code == 200
-        assert response.json() == {"id": ValueStorageOfferCRUD.product_listing_id}
+        assert response.json() == {
+            "id": ValueStorageOfferCRUD.product_listing_id}
