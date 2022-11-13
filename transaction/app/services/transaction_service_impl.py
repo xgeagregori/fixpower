@@ -10,24 +10,9 @@ from uuid import uuid4
 
 class TransactionServiceImpl(TransactionService):
     def create_transaction(self, transaction_create: TransactionCreate):
-        transaction_already_exists = False
+        generated_id = str(uuid4())
 
-        if transaction_create.id:
-            try:
-                transaction_found = self.get_transaction_by_id(transaction_create.id)
-                transaction_already_exists = True
-            except:
-                pass
-
-            # If id already exists, raise exception
-            if transaction_already_exists:
-                raise HTTPException(
-                    status_code=status.HTTP_400_BAD_REQUEST,
-                    detail="Transaction already exists",
-                )
-        else:
-            transaction_create.id = str(uuid4())
-        transaction = Transaction(**transaction_create.dict())
+        transaction = Transaction(id=generated_id, **transaction_create.dict())
         transaction.save()
         return transaction.id
 
