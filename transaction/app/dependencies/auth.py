@@ -7,6 +7,20 @@ import requests
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 
+def authenticate_service():
+    response = requests.post(
+        os.getenv("AWS_API_GATEWAY_URL") + "/user-api/v1/users/login",
+        json={"username": os.getenv("SERVICE_USERNAME"), "password": os.getenv("SERVICE_PASSWORD")},
+    )
+
+    if response.status_code != 200:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Could not authenticate service",
+        )
+
+    return response.json()["access_token"]
+
 
 def check_user_is_admin(current_user):
     if not current_user["is_admin"]:
