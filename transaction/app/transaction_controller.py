@@ -18,7 +18,7 @@ import os
 import requests
 
 app = FastAPI(
-    # root_path="/prod/transaction-api/v1",
+    root_path="/prod/transaction-api/v1",
     title="Transaction API",
     version="1.0.0",
 )
