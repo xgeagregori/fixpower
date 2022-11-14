@@ -9,8 +9,8 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 
 def authenticate_service():
     response = requests.post(
-        os.getenv("AWS_API_GATEWAY_URL") + "/user-api/v1/users/login",
-        json={"username": os.getenv("SERVICE_USERNAME"), "password": os.getenv("SERVICE_PASSWORD")},
+        os.getenv("AWS_API_GATEWAY_URL") + "/user-api/v1/login",
+        data=dict(username=os.getenv("SERVICE_USERNAME"), password=os.getenv("SERVICE_PASSWORD"))
     )
 
     if response.status_code != 200:

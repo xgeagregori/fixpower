@@ -6,20 +6,19 @@ import os
 import requests
 
 class CancelledCommand(Command):
-    def __init__(self, transaction):
-        self.transaction = transaction
+    def __init__(self):
         self.access_token = authenticate_service()
 
-    def execute(self):
-        self.transaction.state = TransactionState.CANCELLED
-        self.transaction.save()
+    def execute(self, transaction):
+        transaction.state = TransactionState.CANCELLED
+        transaction.save()
 
         product_listing = self.get_product_listing()
 
         self.send_notification_seller(product_listing)
         self.send_notification_buyer(product_listing)
 
-        return self.transaction
+        return transaction
 
     def get_product_listing(self):
         product_listing = requests.get(
