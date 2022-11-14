@@ -11,13 +11,14 @@ from app.dependencies.auth import (
     check_user_is_admin,
 )
 from app.dependencies.transaction import TransactionDep
-from app.schemas.transaction import TransactionCreate, TransactionUpdate
+from app.schemas.transaction import TransactionCreate, TransactionUpdate, TransactionOut
+from app.schemas.product_listing import ProductListingOut
 
 import os
 import requests
 
 app = FastAPI(
-    root_path="/prod/transaction-api/v1",
+    # root_path="/prod/transaction-api/v1",
     title="Transaction API",
     version="1.0.0",
 )
@@ -66,7 +67,13 @@ class TransactionController:
         """Get all transactions"""
         check_user_is_admin(current_user)
         transactions = self.transaction_service.get_transactions()
-        return [transactions.attribute_values for transactions in transactions]
+        
+        formatted_transactions = []
+        for transaction in transactions:
+            transaction.product_listing = ProductListingOut(**transaction.product_listing.attribute_values)
+            formatted_transaction = TransactionOut(**transaction.attribute_values)
+            formatted_transactions.append(formatted_transaction)
+        return formatted_transactions
 
     @app.get("/transactions/{transaction_id}", tags=["transactions"])
     def get_transaction_by_id(
@@ -76,7 +83,8 @@ class TransactionController:
     ):
         """Get transaction by id."""
         transaction = self.transaction_service.get_transaction_by_id(transaction_id)
-        return {"id": transaction.id, **transaction.attribute_values}
+        transaction.product_listing = ProductListingOut(**transaction.product_listing.attribute_values)
+        return TransactionOut(**transaction.attribute_values)
 
     @app.patch("/transactions/{transaction_id}", tags=["transactions"])
     def update_transaction_by_id(
@@ -89,7 +97,8 @@ class TransactionController:
         transaction = self.transaction_service.update_transaction_by_id(
             transaction_id, transaction_update
         )
-        return transaction.attribute_values
+        transaction.product_listing = ProductListingOut(**transaction.product_listing.attribute_values)
+        return TransactionOut(**transaction.attribute_values)
 
     @app.delete("/transactions/{transaction_id}", tags=["transactions"])
     def delete_transaction_by_id(
