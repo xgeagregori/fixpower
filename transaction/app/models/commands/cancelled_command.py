@@ -28,7 +28,9 @@ class CancelledCommand(Command):
     def send_notification_seller(self, product_listing):
         requests.post(
             os.getenv("AWS_API_GATEWAY_URL")
-            + f"/user-api/v1/users/" + product_listing["seller"]["id"] + "/notifications",
+            + f"/user-api/v1/users/"
+            + product_listing["seller"]["id"]
+            + "/notifications",
             json={
                 "type": "CANCELLED",
                 "title": "The buyer has cancelled the transaction!",
@@ -40,7 +42,9 @@ class CancelledCommand(Command):
     def send_notification_buyer(self, product_listing):
         requests.post(
             os.getenv("AWS_API_GATEWAY_URL")
-            + f"/user-api/v1/users/" + product_listing["buyer"]["id"] + "/notifications",
+            + f"/user-api/v1/users/"
+            + product_listing["buyer"]["id"]
+            + "/notifications",
             json={
                 "type": "CANCELLED",
                 "title": "You have cancelled the transaction!",
