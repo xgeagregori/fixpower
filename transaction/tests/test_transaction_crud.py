@@ -69,107 +69,120 @@ class TestSuiteTransactionCRUD:
         assert "access_token" in response.json()
         ValueStorageTransactionCRUD.access_token = response.json()["access_token"]
 
-    def test_create_product_listing(self):
-        response = requests.post(
-            os.getenv("AWS_API_GATEWAY_URL")
-            + "/product-listing-api/v1/product-listings",
-            json={
-                "id": "testID",
-                "listed_price": 319.99,
-                "product": {
-                    "name": "Surface Pro 7",
-                    "brand": "Surface",
-                    "category": "REFURBISHED_PRODUCT",
-                    "sub_category": "LAPTOP",
-                },
-            },
-            headers={
-                "Authorization": "Bearer "
-                + ValueStorageTransactionCRUD.access_token_admin
-            },
-        )
-        assert response.status_code == 201
-        assert "id" in response.json()
-        ValueStorageTransactionCRUD.product_listing_id = response.json()["id"]
+    # def test_create_product_listing(self):
+    #     response = requests.post(
+    #         os.getenv("AWS_API_GATEWAY_URL")
+    #         + "/product-listing-api/v1/product-listings",
+    #         json={
+    #             "id": "testProductListingID",
+    #             "seller": {"id": ValueStorageTransactionCRUD.user_ids[0]},
+    #             "product": {
+    #                 "name": "Surface Pro 7",
+    #                 "brand": "Surface",
+    #                 "category": "REFURBISHED_PRODUCT",
+    #                 "sub_category": "LAPTOP",
+    #             },
+    #             "listed_price": 319.99,
+    #         },
+    #         headers={
+    #             "Authorization": "Bearer "
+    #             + ValueStorageTransactionCRUD.access_token_admin
+    #         },
+    #     )
+    #     assert response.status_code == 201
+    #     assert "id" in response.json()
+    #     ValueStorageTransactionCRUD.product_listing_id = response.json()["id"]
 
-    def test_create_transaction(self):
-        response = client.post(
-            "/transactions",
-            json={
-                "product_listing": {
-                    "id": f"{ValueStorageTransactionCRUD.product_listing_id}"
-                },
-                "final_price": 319.99,
-            },
-            headers={
-                "Authorization": "Bearer " + ValueStorageTransactionCRUD.access_token
-            },
-        )
-        assert response.status_code == 201
-        assert "id" in response.json()
-        ValueStorageTransactionCRUD.transaction_id = response.json()["id"]
+    # def test_create_transaction(self):
+    #     response = client.post(
+    #         "/transactions",
+    #         json={
+    #             "product_listing": {
+    #                 "id": ValueStorageTransactionCRUD.product_listing_id
+    #             },
+    #             "final_price": 319.99,
+    #         },
+    #         headers={
+    #             "Authorization": "Bearer " + ValueStorageTransactionCRUD.access_token
+    #         },
+    #     )
+    #     assert response.status_code == 201
+    #     assert "id" in response.json()
+    #     ValueStorageTransactionCRUD.transaction_id = response.json()["id"]
 
-    def test_get_transactions(self):
-        response = client.get(
-            "/transactions",
-            headers={
-                "Authorization": "Bearer "
-                + ValueStorageTransactionCRUD.access_token_admin
-            },
-        )
-        assert response.status_code == 200
-        assert len(response.json()) >= 1
+    # def test_get_transactions(self):
+    #     response = client.get(
+    #         "/transactions",
+    #         headers={
+    #             "Authorization": "Bearer "
+    #             + ValueStorageTransactionCRUD.access_token_admin
+    #         },
+    #     )
+    #     assert response.status_code == 200
+    #     assert len(response.json()) >= 1
 
-    def test_get_transaction_by_id(self):
-        response = client.get(
-            f"/transactions/{ValueStorageTransactionCRUD.transaction_id}",
-            headers={
-                "Authorization": "Bearer " + ValueStorageTransactionCRUD.access_token
-            },
-        )
-        assert response.status_code == 200
-        assert response.json()["id"] == ValueStorageTransactionCRUD.transaction_id
-        assert response.json()["state"] == "PAID"
-        assert response.json()["product_listing"]["id"] == "testProductListingID"
-        assert response.json()["final_price"] == 319.99
-        assert "created_at" in response.json()
+    # def test_get_transaction_by_id(self):
+    #     response = client.get(
+    #         f"/transactions/{ValueStorageTransactionCRUD.transaction_id}",
+    #         headers={
+    #             "Authorization": "Bearer " + ValueStorageTransactionCRUD.access_token
+    #         },
+    #     )
+    #     assert response.status_code == 200
+    #     assert response.json()["id"] == ValueStorageTransactionCRUD.transaction_id
+    #     assert response.json()["state"] == "PAID"
+    #     assert response.json()["product_listing"]["id"] == "testProductListingID"
+    #     assert response.json()["final_price"] == 319.99
+    #     assert "created_at" in response.json()
 
-    def test_get_transaction_not_found(self):
-        response = client.get(
-            "/transactions/notFoundID",
-            headers={
-                "Authorization": "Bearer " + ValueStorageTransactionCRUD.access_token
-            },
-        )
-        assert response.status_code == 404
-        assert response.json() == {"detail": "Transaction not found"}
+    # def test_get_transaction_not_found(self):
+    #     response = client.get(
+    #         "/transactions/notFoundID",
+    #         headers={
+    #             "Authorization": "Bearer " + ValueStorageTransactionCRUD.access_token
+    #         },
+    #     )
+    #     assert response.status_code == 404
+    #     assert response.json() == {"detail": "Transaction not found"}
 
-    def test_update_transaction_by_id(self):
-        response = client.patch(
-            f"/transactions/{ValueStorageTransactionCRUD.transaction_id}",
-            json={
-                "state": "SHIPPED",
-            },
-            headers={
-                "Authorization": "Bearer " + ValueStorageTransactionCRUD.access_token
-            },
-        )
-        assert response.status_code == 200
-        assert response.json()["id"] == ValueStorageTransactionCRUD.transaction_id
-        assert response.json()["state"] == "SHIPPED"
-        assert response.json()["product_listing"]["id"] == "testProductListingID"
-        assert response.json()["final_price"] == 319.99
-        assert "created_at" in response.json()
+    # def test_update_transaction_by_id(self):
+    #     response = client.patch(
+    #         f"/transactions/{ValueStorageTransactionCRUD.transaction_id}",
+    #         json={
+    #             "state": "SHIPPED",
+    #         },
+    #         headers={
+    #             "Authorization": "Bearer " + ValueStorageTransactionCRUD.access_token
+    #         },
+    #     )
+    #     assert response.status_code == 200
+    #     assert response.json()["id"] == ValueStorageTransactionCRUD.transaction_id
+    #     assert response.json()["state"] == "SHIPPED"
+    #     assert response.json()["product_listing"]["id"] == "testProductListingID"
+    #     assert response.json()["final_price"] == 319.99
+    #     assert "created_at" in response.json()
 
-    def test_delete_transaction_by_id(self):
-        response = client.delete(
-            f"/transactions/{ValueStorageTransactionCRUD.transaction_id}",
-            headers={
-                "Authorization": "Bearer " + ValueStorageTransactionCRUD.access_token
-            },
-        )
-        assert response.status_code == 200
-        assert "id" in response.json()
+    # def test_delete_transaction_by_id(self):
+    #     response = client.delete(
+    #         f"/transactions/{ValueStorageTransactionCRUD.transaction_id}",
+    #         headers={
+    #             "Authorization": "Bearer " + ValueStorageTransactionCRUD.access_token
+    #         },
+    #     )
+    #     assert response.status_code == 200
+    #     assert "id" in response.json()
+
+    # def delete_product_listing_by_id(self):
+    #     response = requests.delete(
+    #         os.getenv("AWS_API_GATEWAY_URL")
+    #         + f"/product-listing-api/v1/product-listings/{ValueStorageTransactionCRUD.product_listing_id}",
+    #         headers={
+    #             "Authorization": "Bearer "
+    #             + ValueStorageTransactionCRUD.access_token_admin
+    #         },
+    #     )
+    #     assert response.status_code == 200
+    #     assert "id" in response.json()
 
     def test_delete_user(self):
         # Delete users starting from the last one because the first one has the access token

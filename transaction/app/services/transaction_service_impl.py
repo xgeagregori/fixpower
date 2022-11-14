@@ -28,6 +28,7 @@ class TransactionServiceImpl(TransactionService):
         generated_id = str(uuid4())
 
         transaction = Transaction(id=generated_id, **transaction_create.dict())
+        self.commands[transaction_create.state].execute(transaction)
         transaction.save()
         return transaction.id
 
@@ -54,8 +55,11 @@ class TransactionServiceImpl(TransactionService):
     ):
         transaction = self.get_transaction_by_id(transaction_id)
         if transaction_update.state and transaction.state != transaction_update.state:
-            transaction = self.commands[transaction_update.state].execute(transaction)
+            self.commands[transaction_update.state].execute(transaction)
+        for key, value in transaction_update.dict(exclude_unset=True).items():
+            setattr(transaction, key, value)
 
+        transaction.save()
         return transaction
 
     def delete_transaction_by_id(self, transaction_id: str):

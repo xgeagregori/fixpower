@@ -11,20 +11,15 @@ class PaidCommand(Command):
         self.access_token = authenticate_service()
 
     def execute(self, transaction):
-        transaction.state = TransactionState.PAID
-        transaction.save()
-
-        product_listing = self.get_product_listing()
+        product_listing = self.get_product_listing(transaction)
 
         self.send_notification_seller(product_listing)
         self.send_notification_buyer(product_listing)
 
-        return transaction
-
-    def get_product_listing(self):
+    def get_product_listing(self, transaction):
         product_listing = requests.get(
             os.getenv("AWS_API_GATEWAY_URL")
-            + f"product-listing-api/v1/product-listings/{self.transaction.product_listing_id}",
+            + f"product-listing-api/v1/product-listings/{transaction.product_listing.id}",
             headers={"Authorization": f"Bearer {self.access_token}"},
         )
 
@@ -33,21 +28,23 @@ class PaidCommand(Command):
     def send_notification_seller(self, product_listing):
         requests.post(
             os.getenv("AWS_API_GATEWAY_URL")
-            + f"/user-api/v1/users/{product_listing.seller.id}/notifications",
+            + "/user-api/v1/users/" + product_listing["seller"]["id"] + "/notifications",
             json={
                 "type": "PAID",
                 "title": "You have sold an item!",
                 "message": "Your item has been paid for. Please ship it as soon as possible.",
             },
+            headers={"Authorization": f"Bearer {self.access_token}"},
         )
 
     def send_notification_buyer(self, product_listing):
         requests.post(
             os.getenv("AWS_API_GATEWAY_URL")
-            + f"/user-api/v1/users/{product_listing.buyer.id}/notifications",
+            + f"/user-api/v1/users/" + product_listing["buyer"]["id"] + "/notifications",
             json={
                 "type": "PAID",
                 "title": "You have bought an item!",
                 "message": "Your item has been paid for. Please wait for the seller to ship it.",
             },
+            headers={"Authorization": f"Bearer {self.access_token}"},
         )

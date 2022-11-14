@@ -134,7 +134,6 @@ class TestSuiteOfferCRUD:
             headers={"Authorization": f"Bearer {ValueStorageOfferCRUD.access_token}"},
         )
         assert response.status_code == 200
-        print(response.json())
         assert response.json()["id"] == ValueStorageOfferCRUD.offer_id
         assert response.json()["state"] == "ACCEPTED"
 
