@@ -4,17 +4,17 @@ from pynamodb.attributes import (
 )
 
 
-class Product(MapAttribute):
-    # id = UnicodeAttribute(hash_key=True)
+class ProductAttribute(MapAttribute):
     name = UnicodeAttribute()
     brand = UnicodeAttribute()
-
-class Component(Product):
     category = UnicodeAttribute()
+    sub_category = UnicodeAttribute()
+    issue = UnicodeAttribute(null=True)
 
-class DamageProduct(Product):
-    category = UnicodeAttribute()
-    issue = UnicodeAttribute()
+# class ComponentAttribute(ProductAttribute):
 
-class RefurbishedProduct(Product):
-    category = UnicodeAttribute()
+# class DamagedProduct(ProductAttribute):
+#     category = UnicodeAttribute()
+
+# class RefurbishedProductAttribute(ProductAttribute):
+#     category = UnicodeAttribute()

@@ -1,43 +1,54 @@
 from pydantic import BaseModel
+from typing import Optional, Union
 from enum import Enum
 
 
 class ProductCategory(str, Enum):
-    component = "COMPONENT"
-    damage_product = "DAMAGEPRODUCT"
-    refurbishedproduct = "REFURBISHEDPRODUCT"
+    COMPONENT = "COMPONENT"
+    DAMAGED_PRODUCT = "DAMAGED_PRODUCT"
+    REFURBISHED_PRODUCT = "REFURBISHED_PRODUCT"
+
 
 class DeviceCategory(str, Enum):
-    laptop = "LAPTOP"
-    smartphone = "SMARTPHONE"
-    desktop = "DESkTOP"
-    homeapplicance = "HOMEAPPLICANCE"
+    LAPTOP = "LAPTOP"
+    SMARTPHONE = "SMARTPHONE"
+    DESKTOP = "DESKTOP"
+    HOME_APPLIANCE = "HOME_APPLIANCE"
 
 
 class ComponentCategory(str, Enum):
-    cpu = "CPU"
-    gpu = "GPU"
-    matherboard = "MOTHERBOARD"
-    ram = "RAM"
-    hdd = "HDD"
-    ssd = "SSD"
-    power_unit = "POWERUNIT"
-    screen = "SCREEN"
+    CPU = "CPU"
+    GPU = "GPU"
+    MOTHERBOARD = "MOTHERBOARD"
+    RAM = "RAM"
+    HDD = "HDD"
+    SSD = "SSD"
+    POWER_UNIT = "POWER_UNIT"
+    SCREEN = "SCREEN"
 
 
 class ProductCreate(BaseModel):
     name: str
     brand: str
+    category: ProductCategory
 
 
-class DamageProductCreate(ProductCreate):
-    category: DeviceCategory
+class DamagedProductCreate(ProductCreate):
+    sub_category: DeviceCategory
     issue: str
 
 
 class RefurbishedProductCreate(ProductCreate):
-    category: DeviceCategory
+    sub_category: DeviceCategory
 
 
 class ComponentCreate(ProductCreate):
-    category: ComponentCategory
+    sub_category: ComponentCategory
+
+
+class ProductOut(BaseModel):
+    name: str
+    brand: str
+    category: ProductCategory
+    sub_category: Union[DeviceCategory, ComponentCategory]
+    issue: Optional[str]

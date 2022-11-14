@@ -1,7 +1,7 @@
 from pynamodb.attributes import (
     MapAttribute,
-    UnicodeSetAttribute
+    UnicodeAttribute
 )
 
 class UserAttribute(MapAttribute):
-    id = UnicodeSetAttribute()
+    id = UnicodeAttribute()

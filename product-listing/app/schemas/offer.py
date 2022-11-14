@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 from enum import Enum
-from app.schemas.user import UserCreate
+from app.schemas.user import UserCreate, UserOut
 
 
 
@@ -19,3 +19,10 @@ class OfferCreate(BaseModel):
 
 class OfferUpdate(BaseModel):
     state: OfferState
+
+class OfferOut(BaseModel):
+    id: str
+    state: OfferState
+    sender: UserOut
+    recipient: UserOut
+    price: float
