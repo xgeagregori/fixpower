@@ -1,5 +1,12 @@
 from pynamodb.models import Model
-from pynamodb.attributes import UnicodeAttribute, UTCDateTimeAttribute, NumberAttribute, BooleanAttribute, MapAttribute, ListAttribute
+from pynamodb.attributes import (
+    UnicodeAttribute,
+    UTCDateTimeAttribute,
+    NumberAttribute,
+    BooleanAttribute,
+    MapAttribute,
+    ListAttribute,
+)
 
 from app.models.product_listing import ProductListingAttribute
 

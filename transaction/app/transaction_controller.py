@@ -67,10 +67,12 @@ class TransactionController:
         """Get all transactions"""
         check_user_is_admin(current_user)
         transactions = self.transaction_service.get_transactions()
-        
+
         formatted_transactions = []
         for transaction in transactions:
-            transaction.product_listing = ProductListingOut(**transaction.product_listing.attribute_values)
+            transaction.product_listing = ProductListingOut(
+                **transaction.product_listing.attribute_values
+            )
             formatted_transaction = TransactionOut(**transaction.attribute_values)
             formatted_transactions.append(formatted_transaction)
         return formatted_transactions
@@ -83,7 +85,9 @@ class TransactionController:
     ):
         """Get transaction by id."""
         transaction = self.transaction_service.get_transaction_by_id(transaction_id)
-        transaction.product_listing = ProductListingOut(**transaction.product_listing.attribute_values)
+        transaction.product_listing = ProductListingOut(
+            **transaction.product_listing.attribute_values
+        )
         return TransactionOut(**transaction.attribute_values)
 
     @app.patch("/transactions/{transaction_id}", tags=["transactions"])
@@ -97,7 +101,9 @@ class TransactionController:
         transaction = self.transaction_service.update_transaction_by_id(
             transaction_id, transaction_update
         )
-        transaction.product_listing = ProductListingOut(**transaction.product_listing.attribute_values)
+        transaction.product_listing = ProductListingOut(
+            **transaction.product_listing.attribute_values
+        )
         return TransactionOut(**transaction.attribute_values)
 
     @app.delete("/transactions/{transaction_id}", tags=["transactions"])

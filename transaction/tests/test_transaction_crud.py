@@ -71,7 +71,8 @@ class TestSuiteTransactionCRUD:
 
     def test_create_product_listing(self):
         response = requests.post(
-            os.getenv("AWS_API_GATEWAY_URL") + "/product-listing-api/v1/product-listings",
+            os.getenv("AWS_API_GATEWAY_URL")
+            + "/product-listing-api/v1/product-listings",
             json={
                 "id": "testID",
                 "listed_price": 319.99,
@@ -82,7 +83,10 @@ class TestSuiteTransactionCRUD:
                     "sub_category": "LAPTOP",
                 },
             },
-            headers={"Authorization": "Bearer " + ValueStorageTransactionCRUD.access_token_admin},
+            headers={
+                "Authorization": "Bearer "
+                + ValueStorageTransactionCRUD.access_token_admin
+            },
         )
         assert response.status_code == 201
         assert "id" in response.json()
@@ -92,7 +96,9 @@ class TestSuiteTransactionCRUD:
         response = client.post(
             "/transactions",
             json={
-                "product_listing": {"id": f"{ValueStorageTransactionCRUD.product_listing_id}"},
+                "product_listing": {
+                    "id": f"{ValueStorageTransactionCRUD.product_listing_id}"
+                },
                 "final_price": 319.99,
             },
             headers={
@@ -159,8 +165,7 @@ class TestSuiteTransactionCRUD:
         response = client.delete(
             f"/transactions/{ValueStorageTransactionCRUD.transaction_id}",
             headers={
-                "Authorization": "Bearer "
-                + ValueStorageTransactionCRUD.access_token
+                "Authorization": "Bearer " + ValueStorageTransactionCRUD.access_token
             },
         )
         assert response.status_code == 200

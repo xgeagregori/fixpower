@@ -53,10 +53,7 @@ class TransactionServiceImpl(TransactionService):
         self, transaction_id: str, transaction_update: TransactionUpdate
     ):
         transaction = self.get_transaction_by_id(transaction_id)
-        if (
-            transaction_update.state
-            and transaction.state != transaction_update.state
-        ):
+        if transaction_update.state and transaction.state != transaction_update.state:
             transaction = self.commands[transaction_update.state].execute(transaction)
 
         return transaction

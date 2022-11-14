@@ -5,6 +5,7 @@ from app.schemas.transaction import TransactionState
 import os
 import requests
 
+
 class CancelledCommand(Command):
     def __init__(self):
         self.access_token = authenticate_service()
@@ -22,29 +23,31 @@ class CancelledCommand(Command):
 
     def get_product_listing(self):
         product_listing = requests.get(
-            os.getenv(
-                "AWS_API_GATEWAY_URL") + f"product-listing-api/v1/product-listings/{self.transaction.product_listing_id}",
-                headers={"Authorization": f"Bearer {self.access_token}"},
-            )
+            os.getenv("AWS_API_GATEWAY_URL")
+            + f"product-listing-api/v1/product-listings/{self.transaction.product_listing_id}",
+            headers={"Authorization": f"Bearer {self.access_token}"},
+        )
 
         return product_listing.json()
 
     def send_notification_seller(self, product_listing):
         requests.post(
-            os.getenv("AWS_API_GATEWAY_URL") + f"/user-api/v1/users/{product_listing.seller.id}/notifications",
+            os.getenv("AWS_API_GATEWAY_URL")
+            + f"/user-api/v1/users/{product_listing.seller.id}/notifications",
             json={
                 "type": "CANCELLED",
                 "title": "The buyer has cancelled the transaction!",
-                "message": "The buyer has cancelled the transaction."
+                "message": "The buyer has cancelled the transaction.",
             },
         )
 
     def send_notification_buyer(self, product_listing):
         requests.post(
-            os.getenv("AWS_API_GATEWAY_URL") + f"/user-api/v1/users/{product_listing.buyer.id}/notifications",
+            os.getenv("AWS_API_GATEWAY_URL")
+            + f"/user-api/v1/users/{product_listing.buyer.id}/notifications",
             json={
                 "type": "CANCELLED",
                 "title": "You have cancelled the transaction!",
-                "message": "You have cancelled the transaction."
+                "message": "You have cancelled the transaction.",
             },
         )

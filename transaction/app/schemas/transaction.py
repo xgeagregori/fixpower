@@ -6,12 +6,14 @@ from app.schemas.product_listing import ProductListingCreate, ProductListingOut
 
 from datetime import datetime
 
+
 class TransactionState(str, Enum):
     PAID = "PAID"
     SHIPPED = "SHIPPED"
     DELIVERED = "DELIVERED"
     RETURNED = "RETURNED"
     CANCELLED = "CANCELLED"
+
 
 class TransactionCreate(BaseModel):
     state: str = TransactionState.PAID
@@ -21,6 +23,7 @@ class TransactionCreate(BaseModel):
 
 class TransactionUpdate(BaseModel):
     state: Optional[TransactionState]
+
 
 class TransactionOut(BaseModel):
     id: str
