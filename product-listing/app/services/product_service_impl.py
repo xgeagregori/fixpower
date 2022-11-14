@@ -4,7 +4,6 @@ from app.schemas.product import (
     RefurbishedProductCreate,
     ProductCategory,
     ProductCreate,
-    ProductOut,
 )
 from app.services.product_service import ProductService, ProductFactory
 
@@ -35,5 +34,4 @@ class DamagedProductFactory(ProductFactory):
 
 class RefurbishedFactory(ProductFactory):
     def create_product(self, product_create: ProductCreate):
-        print(product_create.dict())
         return RefurbishedProductCreate(**product_create.dict())
