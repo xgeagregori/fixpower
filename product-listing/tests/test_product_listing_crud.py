@@ -83,6 +83,7 @@ class TestSuiteProductListingCRUD:
                     "category": "REFURBISHED_PRODUCT",
                     "sub_category": "LAPTOP",
                 },
+            },
             headers={
                 "Authorization": "Bearer " + ValueStorageProductListingCRUD.access_token
             },
@@ -102,6 +103,7 @@ class TestSuiteProductListingCRUD:
                     "category": "REFURBISHED_PRODUCT",
                     "sub_category": "LAPTOP",
                 },
+            },
             headers={
                 "Authorization": "Bearer " + ValueStorageProductListingCRUD.access_token
             },
@@ -122,6 +124,7 @@ class TestSuiteProductListingCRUD:
                     "category": "REFURBISHED_PRODUCT",
                     "sub_category": "LAPTOP",
                 },
+            },
             headers={
                 "Authorization": "Bearer " + ValueStorageProductListingCRUD.access_token
             },
@@ -166,7 +169,8 @@ class TestSuiteProductListingCRUD:
 
     def test_update_product_listing_by_id(self):
         response = client.patch(
-            "/product-listings/testID", json={"listed_price": 349.99}
+            "/product-listings/testID",
+            json={"listed_price": 349.99},
             headers={
                 "Authorization": "Bearer " + ValueStorageProductListingCRUD.access_token
             },
