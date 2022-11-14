@@ -10,11 +10,3 @@ class ProductAttribute(MapAttribute):
     category = UnicodeAttribute()
     sub_category = UnicodeAttribute()
     issue = UnicodeAttribute(null=True)
-
-# class ComponentAttribute(ProductAttribute):
-
-# class DamagedProduct(ProductAttribute):
-#     category = UnicodeAttribute()
-
-# class RefurbishedProductAttribute(ProductAttribute):
-#     category = UnicodeAttribute()

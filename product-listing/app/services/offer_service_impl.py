@@ -27,7 +27,7 @@ class OfferServiceImpl(OfferService):
         product_listing = self.product_listing_service.get_product_listing_by_id(
             product_listing_id
         )
-        
+
         return product_listing.offers
 
     def get_offer_by_id(self, product_listing_id, offer_id):
@@ -52,12 +52,13 @@ class OfferServiceImpl(OfferService):
                 if offer_update.state == OfferState.ACCEPTED:
                     if product_listing.sold:
                         raise HTTPException(
-                            status_code=status.HTTP_400_BAD_REQUEST, detail="Product already sold"
+                            status_code=status.HTTP_400_BAD_REQUEST,
+                            detail="Product already sold",
                         )
                     else:
                         offer.state = offer_update.state
                         product_listing.sold = True
-        product_listing.save()                
+        product_listing.save()
         return offer
 
     def delete_offer_by_id(self, product_listing_id, offer_id):

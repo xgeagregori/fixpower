@@ -3,7 +3,6 @@ from enum import Enum
 from app.schemas.user import UserCreate, UserOut
 
 
-
 class OfferState(str, Enum):
     ACCEPTED = "ACCEPTED"
     DECLINED = "DECLINED"
@@ -11,7 +10,7 @@ class OfferState(str, Enum):
 
 
 class OfferCreate(BaseModel):
-    state:OfferState = OfferState.PENDING
+    state: OfferState = OfferState.PENDING
     sender: UserCreate
     recipient: UserCreate
     price: float
@@ -19,6 +18,7 @@ class OfferCreate(BaseModel):
 
 class OfferUpdate(BaseModel):
     state: OfferState
+
 
 class OfferOut(BaseModel):
     id: str

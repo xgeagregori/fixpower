@@ -33,6 +33,10 @@ class ProductCreate(BaseModel):
     category: ProductCategory
 
 
+class ComponentCreate(ProductCreate):
+    sub_category: ComponentCategory
+
+
 class DamagedProductCreate(ProductCreate):
     sub_category: DeviceCategory
     issue: str
@@ -40,10 +44,6 @@ class DamagedProductCreate(ProductCreate):
 
 class RefurbishedProductCreate(ProductCreate):
     sub_category: DeviceCategory
-
-
-class ComponentCreate(ProductCreate):
-    sub_category: ComponentCategory
 
 
 class ProductOut(BaseModel):
