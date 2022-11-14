@@ -74,6 +74,8 @@ class ProductListingServiceImpl(ProductListingService):
         for key, value in product_listing_update.dict().items():
             if value:
                 setattr(product_listing, key, value)
+            if key == "buyer":
+                product_listing.sold = True
 
         product_listing.save()
         return product_listing

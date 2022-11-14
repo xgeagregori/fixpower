@@ -17,7 +17,6 @@ class ValueStorageProductListingCRUD:
 
 class TestSuiteProductListingCRUD:
     def test_create_user_admin(self):
-        print(os.getenv("AWS_API_GATEWAY_URL"))
         user_response = requests.post(
             os.getenv("AWS_API_GATEWAY_URL") + "/user-api/v1/register",
             json={
@@ -76,13 +75,14 @@ class TestSuiteProductListingCRUD:
             "/product-listings",
             json={
                 "id": "testID",
-                "listed_price": 319.99,
+                "seller": {"id": ValueStorageProductListingCRUD.user_ids[0]},
                 "product": {
                     "name": "Surface Pro 7",
                     "brand": "Surface",
                     "category": "REFURBISHED_PRODUCT",
                     "sub_category": "LAPTOP",
                 },
+                "listed_price": 319.99,
             },
             headers={
                 "Authorization": "Bearer " + ValueStorageProductListingCRUD.access_token
@@ -96,13 +96,14 @@ class TestSuiteProductListingCRUD:
         response = client.post(
             "/product-listings",
             json={
-                "listed_price": 319.99,
+                "seller": {"id": ValueStorageProductListingCRUD.user_ids[0]},
                 "product": {
                     "name": "Surface Pro 7",
                     "brand": "Surface",
                     "category": "REFURBISHED_PRODUCT",
                     "sub_category": "LAPTOP",
                 },
+                "listed_price": 319.99,
             },
             headers={
                 "Authorization": "Bearer " + ValueStorageProductListingCRUD.access_token
@@ -117,13 +118,14 @@ class TestSuiteProductListingCRUD:
             "/product-listings",
             json={
                 "id": "testID",
-                "listed_price": 319.99,
+                "seller": {"id": ValueStorageProductListingCRUD.user_ids[0]},
                 "product": {
                     "name": "Surface Pro 7",
                     "brand": "Surface",
                     "category": "REFURBISHED_PRODUCT",
                     "sub_category": "LAPTOP",
                 },
+                "listed_price": 319.99,
             },
             headers={
                 "Authorization": "Bearer " + ValueStorageProductListingCRUD.access_token
@@ -151,11 +153,15 @@ class TestSuiteProductListingCRUD:
         )
         assert response.status_code == 200
         assert response.json()["id"] == "testID"
-        assert response.json()["listed_price"] == 319.99
+        assert (
+            response.json()["seller"]["id"]
+            == ValueStorageProductListingCRUD.user_ids[0]
+        )
         assert response.json()["product"]["name"] == "Surface Pro 7"
         assert response.json()["product"]["brand"] == "Surface"
         assert response.json()["product"]["category"] == "REFURBISHED_PRODUCT"
         assert response.json()["product"]["sub_category"] == "LAPTOP"
+        assert response.json()["listed_price"] == 319.99
 
     def test_get_product_listing_by_id_not_found(self):
         response = client.get(
@@ -177,11 +183,15 @@ class TestSuiteProductListingCRUD:
         )
         assert response.status_code == 200
         assert response.json()["id"] == "testID"
-        assert response.json()["listed_price"] == 349.99
+        assert (
+            response.json()["seller"]["id"]
+            == ValueStorageProductListingCRUD.user_ids[0]
+        )
         assert response.json()["product"]["name"] == "Surface Pro 7"
         assert response.json()["product"]["brand"] == "Surface"
         assert response.json()["product"]["category"] == "REFURBISHED_PRODUCT"
         assert response.json()["product"]["sub_category"] == "LAPTOP"
+        assert response.json()["listed_price"] == 349.99
 
     def test_delete_product_listing_by_id(self):
         for id in ValueStorageProductListingCRUD.product_listing_ids:

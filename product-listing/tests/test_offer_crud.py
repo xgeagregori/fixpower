@@ -74,6 +74,7 @@ class TestSuiteOfferCRUD:
             "/product-listings",
             json={
                 "id": "testID",
+                "seller": {"id": ValueStorageOfferCRUD.user_ids[0]},
                 "listed_price": 319.99,
                 "product": {
                     "name": "Surface Pro 7",
@@ -133,7 +134,6 @@ class TestSuiteOfferCRUD:
             headers={"Authorization": f"Bearer {ValueStorageOfferCRUD.access_token}"},
         )
         assert response.status_code == 200
-        print(response.json())
         assert response.json()["id"] == ValueStorageOfferCRUD.offer_id
         assert response.json()["state"] == "ACCEPTED"
 

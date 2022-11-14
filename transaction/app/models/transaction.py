@@ -1,5 +1,14 @@
 from pynamodb.models import Model
-from pynamodb.attributes import UnicodeAttribute, UTCDateTimeAttribute
+from pynamodb.attributes import (
+    UnicodeAttribute,
+    UTCDateTimeAttribute,
+    NumberAttribute,
+    BooleanAttribute,
+    MapAttribute,
+    ListAttribute,
+)
+
+from app.models.product_listing import ProductListingAttribute
 
 import datetime
 import os
@@ -13,4 +22,6 @@ class Transaction(Model):
 
     id = UnicodeAttribute(hash_key=True)
     state = UnicodeAttribute()
+    product_listing = ProductListingAttribute()
+    final_price = NumberAttribute()
     created_at = UTCDateTimeAttribute(default=datetime.datetime.now)
