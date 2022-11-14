@@ -74,6 +74,7 @@ class TestSuiteOfferCRUD:
             "/product-listings",
             json={
                 "id": "testID",
+                "seller": {"id": ValueStorageOfferCRUD.user_ids[0]},
                 "listed_price": 319.99,
                 "product": {
                     "name": "Surface Pro 7",

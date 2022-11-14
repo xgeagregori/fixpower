@@ -9,6 +9,7 @@ from pynamodb.attributes import (
 
 from app.models.offer import Offer
 from app.models.product import ProductAttribute
+from app.models.user import UserAttribute
 
 import os
 
@@ -20,7 +21,9 @@ class ProductListing(Model):
         aws_secret_access_key = os.getenv("AWS_SECRET_ACCESS_KEY_LAMBDA")
 
     id = UnicodeAttribute(hash_key=True)
+    seller = UserAttribute()
+    buyer = UserAttribute(null=True)
+    product = ProductAttribute()
     listed_price = NumberAttribute()
     offers = ListAttribute(of=Offer, default=[])
     sold = BooleanAttribute(default=False)
-    product = ProductAttribute()

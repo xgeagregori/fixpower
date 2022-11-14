@@ -24,7 +24,7 @@ import os
 import requests
 
 app = FastAPI(
-    root_path="/prod/product-listing-api/v1",
+    # root_path="/prod/product-listing-api/v1",
     title="Product Listing API",
     version="1.0.0",
 )
@@ -86,6 +86,9 @@ class ProductListingController:
             product_listing.offers = [
                 OfferOut(**offer.attribute_values) for offer in product_listing.offers
             ]
+            product_listing.seller = UserOut(**product_listing.seller.attribute_values)
+            if product_listing.buyer:
+                product_listing.buyer = UserOut(**product_listing.buyer.attribute_values)
             product_listing.product = ProductOut(
                 **product_listing.product.attribute_values
             )
@@ -113,6 +116,9 @@ class ProductListingController:
         product_listing.offers = [
             OfferOut(**offer.attribute_values) for offer in product_listing.offers
         ]
+        product_listing.seller = UserOut(**product_listing.seller.attribute_values)
+        if product_listing.buyer:
+            product_listing.buyer = UserOut(**product_listing.buyer.attribute_values)
         product_listing.product = ProductOut(**product_listing.product.attribute_values)
         formatted_product_listing = ProductListingOut(
             **product_listing.attribute_values
@@ -138,6 +144,9 @@ class ProductListingController:
         product_listing.offers = [
             OfferOut(**offer.attribute_values) for offer in product_listing.offers
         ]
+        product_listing.seller = UserOut(**product_listing.seller.attribute_values)
+        if product_listing.buyer:
+            product_listing.buyer = UserOut(**product_listing.buyer.attribute_values)
         product_listing.product = ProductOut(**product_listing.product.attribute_values)
         formatted_product_listing = ProductListingOut(
             **product_listing.attribute_values
@@ -180,7 +189,6 @@ class ProductListingController:
 
         formatted_offers = []
         for offer in offers:
-            print(offer.sender.attribute_values)
             offer.sender = UserOut(**offer.sender.attribute_values)
             offer.recipient = UserOut(**offer.recipient.attribute_values)
             formatted_offer = OfferOut(**offer.attribute_values)
