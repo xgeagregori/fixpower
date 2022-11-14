@@ -88,7 +88,9 @@ class ProductListingController:
             ]
             product_listing.seller = UserOut(**product_listing.seller.attribute_values)
             if product_listing.buyer:
-                product_listing.buyer = UserOut(**product_listing.buyer.attribute_values)
+                product_listing.buyer = UserOut(
+                    **product_listing.buyer.attribute_values
+                )
             product_listing.product = ProductOut(
                 **product_listing.product.attribute_values
             )

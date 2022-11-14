@@ -154,7 +154,10 @@ class TestSuiteProductListingCRUD:
         )
         assert response.status_code == 200
         assert response.json()["id"] == "testID"
-        assert response.json()["seller"]["id"] == ValueStorageProductListingCRUD.user_ids[0]
+        assert (
+            response.json()["seller"]["id"]
+            == ValueStorageProductListingCRUD.user_ids[0]
+        )
         assert response.json()["product"]["name"] == "Surface Pro 7"
         assert response.json()["product"]["brand"] == "Surface"
         assert response.json()["product"]["category"] == "REFURBISHED_PRODUCT"
@@ -181,7 +184,10 @@ class TestSuiteProductListingCRUD:
         )
         assert response.status_code == 200
         assert response.json()["id"] == "testID"
-        assert response.json()["seller"]["id"] == ValueStorageProductListingCRUD.user_ids[0]
+        assert (
+            response.json()["seller"]["id"]
+            == ValueStorageProductListingCRUD.user_ids[0]
+        )
         assert response.json()["product"]["name"] == "Surface Pro 7"
         assert response.json()["product"]["brand"] == "Surface"
         assert response.json()["product"]["category"] == "REFURBISHED_PRODUCT"
