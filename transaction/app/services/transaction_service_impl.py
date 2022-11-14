@@ -2,13 +2,11 @@ from fastapi import HTTPException, status
 from pynamodb.exceptions import DoesNotExist, DeleteError
 
 from app.models.transaction import Transaction
-from app.models.transaction_state_commands import (
-    PaidCommand,
-    ShippedCommand,
-    DeliveredCommand,
-    ReturnedCommand,
-    CancelledCommand,
-)
+from app.models.commands.paid_command import PaidCommand
+from app.models.commands.shipped_command import ShippedCommand
+from app.models.commands.delivered_command import DeliveredCommand
+from app.models.commands.returned_command import ReturnedCommand
+from app.models.commands.cancelled_command import CancelledCommand
 from app.schemas.transaction import TransactionCreate, TransactionUpdate
 from app.services.transaction_service import TransactionService
 

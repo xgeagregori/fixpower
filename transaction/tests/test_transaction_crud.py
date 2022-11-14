@@ -12,6 +12,7 @@ class ValueStorageTransactionCRUD:
     user_ids = []
     access_token_admin = None
     access_token = None
+    product_listing_id = None
     transaction_id = None
 
 
@@ -68,12 +69,31 @@ class TestSuiteTransactionCRUD:
         assert "access_token" in response.json()
         ValueStorageTransactionCRUD.access_token = response.json()["access_token"]
 
+    def test_create_product_listing(self):
+        response = requests.post(
+            os.getenv("AWS_API_GATEWAY_URL") + "/product-listing-api/v1/product-listings",
+            json={
+                "id": "testID",
+                "listed_price": 319.99,
+                "product": {
+                    "name": "Surface Pro 7",
+                    "brand": "Surface",
+                    "category": "REFURBISHED_PRODUCT",
+                    "sub_category": "LAPTOP",
+                },
+            },
+            headers={"Authorization": "Bearer " + ValueStorageTransactionCRUD.access_token_admin},
+        )
+        assert response.status_code == 201
+        assert "id" in response.json()
+        ValueStorageTransactionCRUD.product_listing_id = response.json()["id"]
+
     def test_create_transaction(self):
         response = client.post(
             "/transactions",
             json={
-                "product_listing": {"id": "testProductListingID"},
-                "final_price": 100.42,
+                "product_listing": {"id": f"{ValueStorageTransactionCRUD.product_listing_id}"},
+                "final_price": 319.99,
             },
             headers={
                 "Authorization": "Bearer " + ValueStorageTransactionCRUD.access_token
@@ -105,7 +125,7 @@ class TestSuiteTransactionCRUD:
         assert response.json()["id"] == ValueStorageTransactionCRUD.transaction_id
         assert response.json()["state"] == "PAID"
         assert response.json()["product_listing"]["id"] == "testProductListingID"
-        assert response.json()["final_price"] == 100.42
+        assert response.json()["final_price"] == 319.99
         assert "created_at" in response.json()
 
     def test_get_transaction_not_found(self):
@@ -132,7 +152,7 @@ class TestSuiteTransactionCRUD:
         assert response.json()["id"] == ValueStorageTransactionCRUD.transaction_id
         assert response.json()["state"] == "SHIPPED"
         assert response.json()["product_listing"]["id"] == "testProductListingID"
-        assert response.json()["final_price"] == 100.42
+        assert response.json()["final_price"] == 319.99
         assert "created_at" in response.json()
 
     def test_delete_transaction_by_id(self):
