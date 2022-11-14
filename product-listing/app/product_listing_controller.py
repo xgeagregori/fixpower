@@ -11,16 +11,20 @@ from app.dependencies.auth import (
     check_user_is_admin,
 )
 from app.dependencies.product_listing import ProductListingDep
-from app.dependencies.offer import OfferDep
-from app.schemas.product_listing import ProductListingCreate, ProductListingUpdate
-from app.schemas.offer import OfferCreate, OfferUpdate
-
+from app.schemas.offer import OfferCreate, OfferUpdate, OfferOut
+from app.schemas.product import ProductOut
+from app.schemas.product_listing import (
+    ProductListingCreate,
+    ProductListingUpdate,
+    ProductListingOut,
+)
+from app.schemas.user import UserOut
 
 import os
 import requests
 
 app = FastAPI(
-    root_path="/prod/product-listing-api/v1",
+    # root_path="/prod/product-listing-api/v1",
     title="Product Listing API",
     version="1.0.0",
 )
@@ -73,9 +77,24 @@ class ProductListingController:
     ):
         """Get all product listings"""
         product_listings = self.product_listing_service.get_product_listings()
-        return [
-            product_listing.attribute_values for product_listing in product_listings
-        ]
+
+        formatted_product_listings = []
+        for product_listing in product_listings:
+            for offer in product_listing.offers:
+                offer.sender = UserOut(**offer.sender.attribute_values)
+                offer.recipient = UserOut(**offer.recipient.attribute_values)
+            product_listing.offers = [
+                OfferOut(**offer.attribute_values) for offer in product_listing.offers
+            ]
+            product_listing.product = ProductOut(
+                **product_listing.product.attribute_values
+            )
+            formatted_product_listing = ProductListingOut(
+                **product_listing.attribute_values
+            )
+            formatted_product_listings.append(formatted_product_listing)
+
+        return formatted_product_listings
 
     @app.get("/product-listings/{product_listing_id}", tags=["product-listings"])
     def get_product_listing_by_id(
@@ -87,7 +106,19 @@ class ProductListingController:
         product_listing = self.product_listing_service.get_product_listing_by_id(
             product_listing_id
         )
-        return product_listing.attribute_values
+
+        for offer in product_listing.offers:
+            offer.sender = UserOut(**offer.sender.attribute_values)
+            offer.recipient = UserOut(**offer.recipient.attribute_values)
+        product_listing.offers = [
+            OfferOut(**offer.attribute_values) for offer in product_listing.offers
+        ]
+        product_listing.product = ProductOut(**product_listing.product.attribute_values)
+        formatted_product_listing = ProductListingOut(
+            **product_listing.attribute_values
+        )
+
+        return formatted_product_listing
 
     @app.patch("/product-listings/{product_listing_id}", tags=["product-listings"])
     def update_product_listing_by_id(
@@ -100,7 +131,19 @@ class ProductListingController:
         product_listing = self.product_listing_service.update_product_listing_by_id(
             product_listing_id, product_listing_update
         )
-        return product_listing.attribute_values
+
+        for offer in product_listing.offers:
+            offer.sender = UserOut(**offer.sender.attribute_values)
+            offer.recipient = UserOut(**offer.recipient.attribute_values)
+        product_listing.offers = [
+            OfferOut(**offer.attribute_values) for offer in product_listing.offers
+        ]
+        product_listing.product = ProductOut(**product_listing.product.attribute_values)
+        formatted_product_listing = ProductListingOut(
+            **product_listing.attribute_values
+        )
+
+        return formatted_product_listing
 
     @app.delete("/product-listings/{product_listing_id}", tags=["product-listings"])
     def delete_product_listing_by_id(
@@ -120,7 +163,9 @@ class ProductListingController:
         tags=["offers"],
     )
     def create_offer(
-        product_listing_id: str, offer_create: OfferCreate, self=Depends(OfferDep)
+        product_listing_id: str,
+        offer_create: OfferCreate,
+        self=Depends(ProductListingDep),
     ):
         """Create offer"""
         offer_id = self.offer_service.create_offer(product_listing_id, offer_create)
@@ -128,19 +173,35 @@ class ProductListingController:
 
     @app.get("/product-listings/{product_listing_id}/offers", tags=["offers"])
     def get_offers_by_product_listing_id(
-        product_listing_id: str, self=Depends(OfferDep)
+        product_listing_id: str, self=Depends(ProductListingDep)
     ):
         """Get offers by product listing id"""
         offers = self.offer_service.get_offers_by_product_listing_id(product_listing_id)
-        return [offer.attribute_values for offer in offers]
+
+        formatted_offers = []
+        for offer in offers:
+            print(offer.sender.attribute_values)
+            offer.sender = UserOut(**offer.sender.attribute_values)
+            offer.recipient = UserOut(**offer.recipient.attribute_values)
+            formatted_offer = OfferOut(**offer.attribute_values)
+            formatted_offers.append(formatted_offer)
+
+        return formatted_offers
 
     @app.get(
         "/product-listings/{product_listing_id}/offers/{offer_id}", tags=["offers"]
     )
-    def get_offer_by_id(product_listing_id: str, offer_id: str, self=Depends(OfferDep)):
+    def get_offer_by_id(
+        product_listing_id: str, offer_id: str, self=Depends(ProductListingDep)
+    ):
         """Get offer by id"""
         offer = self.offer_service.get_offer_by_id(product_listing_id, offer_id)
-        return offer.attribute_values
+
+        offer.sender = UserOut(**offer.sender.attribute_values)
+        offer.recipient = UserOut(**offer.recipient.attribute_values)
+        formatted_offer = OfferOut(**offer.attribute_values)
+
+        return formatted_offer
 
     @app.patch(
         "/product-listings/{product_listing_id}/offers/{offer_id}", tags=["offers"]
@@ -149,19 +210,24 @@ class ProductListingController:
         product_listing_id: str,
         offer_id: str,
         offer_update: OfferUpdate,
-        self=Depends(OfferDep),
+        self=Depends(ProductListingDep),
     ):
         """Update offer"""
         offer = self.offer_service.update_offer_by_id(
             product_listing_id, offer_id, offer_update
         )
-        return offer.attribute_values
+
+        offer.sender = UserOut(**offer.sender.attribute_values)
+        offer.recipient = UserOut(**offer.recipient.attribute_values)
+        formatted_offer = OfferOut(**offer.attribute_values)
+
+        return formatted_offer
 
     @app.delete(
         "/product-listings/{product_listing_id}/offers/{offer_id}", tags=["offers"]
     )
     def delete_offer_by_id(
-        product_listing_id: str, offer_id: str, self=Depends(OfferDep)
+        product_listing_id: str, offer_id: str, self=Depends(ProductListingDep)
     ):
         """Delete offer"""
         offer_id = self.offer_service.delete_offer_by_id(product_listing_id, offer_id)

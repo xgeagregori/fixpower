@@ -1,22 +1,28 @@
 from pydantic import BaseModel
 from enum import Enum
-from typing import Optional
-
-
-from datetime import datetime
+from app.schemas.user import UserCreate, UserOut
 
 
 class OfferState(str, Enum):
-    accepted = "ACCEPTED"
-    declined = "DECLINED"
-    pending = "PENDING"
+    ACCEPTED = "ACCEPTED"
+    DECLINED = "DECLINED"
+    PENDING = "PENDING"
 
 
 class OfferCreate(BaseModel):
-    sender: str
-    recipient: str
+    state: OfferState = OfferState.PENDING
+    sender: UserCreate
+    recipient: UserCreate
     price: float
 
 
 class OfferUpdate(BaseModel):
     state: OfferState
+
+
+class OfferOut(BaseModel):
+    id: str
+    state: OfferState
+    sender: UserOut
+    recipient: UserOut
+    price: float

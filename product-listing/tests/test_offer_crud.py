@@ -72,7 +72,16 @@ class TestSuiteOfferCRUD:
     def test_create_product_listing_with_id(self):
         response = client.post(
             "/product-listings",
-            json={"id": "testID", "listed_price": 12.3},
+            json={
+                "id": "testID",
+                "listed_price": 319.99,
+                "product": {
+                    "name": "Surface Pro 7",
+                    "brand": "Surface",
+                    "category": "REFURBISHED_PRODUCT",
+                    "sub_category": "LAPTOP",
+                },
+            },
             headers={"Authorization": f"Bearer {ValueStorageOfferCRUD.access_token}"},
         )
         assert response.status_code == 201
@@ -82,7 +91,7 @@ class TestSuiteOfferCRUD:
     def test_create_offer(self):
         response = client.post(
             f"/product-listings/{ValueStorageOfferCRUD.product_listing_id}/offers",
-            json={"sender": "123", "recipient": "432", "price": 12.3},
+            json={"sender": {"id": "123"}, "recipient": {"id": "432"}, "price": 299.99},
             headers={"Authorization": f"Bearer {ValueStorageOfferCRUD.access_token}"},
         )
         assert response.status_code == 201
@@ -104,9 +113,10 @@ class TestSuiteOfferCRUD:
         )
         assert response.status_code == 200
         assert response.json()["id"] == ValueStorageOfferCRUD.offer_id
-        assert response.json()["sender"] == "123"
-        assert response.json()["recipient"] == "432"
-        assert response.json()["price"] == 12.3
+        assert response.json()["sender"]["id"] == "123"
+        assert response.json()["recipient"]["id"] == "432"
+        assert response.json()["price"] == 299.99
+        assert response.json()["state"] == "PENDING"
 
     def test_get_offer_by_id_not_found(self):
         response = client.get(
@@ -123,6 +133,7 @@ class TestSuiteOfferCRUD:
             headers={"Authorization": f"Bearer {ValueStorageOfferCRUD.access_token}"},
         )
         assert response.status_code == 200
+        print(response.json())
         assert response.json()["id"] == ValueStorageOfferCRUD.offer_id
         assert response.json()["state"] == "ACCEPTED"
 

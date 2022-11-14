@@ -5,13 +5,15 @@ from pynamodb.attributes import (
     NumberAttribute,
 )
 
+from app.models.user import UserAttribute
+
 import datetime
 
 
 class Offer(MapAttribute):
     id = UnicodeAttribute(hash_key=True)
-    state = UnicodeAttribute(default="Pending")
-    sender = UnicodeAttribute()
-    recipient = UnicodeAttribute()
+    state = UnicodeAttribute()
+    sender = UserAttribute()
+    recipient = UserAttribute()
     price = NumberAttribute()
     created_at = UTCDateTimeAttribute(default=datetime.datetime.now)

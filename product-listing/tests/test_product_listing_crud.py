@@ -74,7 +74,16 @@ class TestSuiteProductListingCRUD:
     def test_create_product_listing_with_id(self):
         response = client.post(
             "/product-listings",
-            json={"id": "testID", "listed_price": 12.3},
+            json={
+                "id": "testID",
+                "listed_price": 319.99,
+                "product": {
+                    "name": "Surface Pro 7",
+                    "brand": "Surface",
+                    "category": "REFURBISHED_PRODUCT",
+                    "sub_category": "LAPTOP",
+                },
+            },
             headers={
                 "Authorization": "Bearer " + ValueStorageProductListingCRUD.access_token
             },
@@ -86,7 +95,15 @@ class TestSuiteProductListingCRUD:
     def test_create_product_listing_without_id(self):
         response = client.post(
             "/product-listings",
-            json={"listed_price": 3.45},
+            json={
+                "listed_price": 319.99,
+                "product": {
+                    "name": "Surface Pro 7",
+                    "brand": "Surface",
+                    "category": "REFURBISHED_PRODUCT",
+                    "sub_category": "LAPTOP",
+                },
+            },
             headers={
                 "Authorization": "Bearer " + ValueStorageProductListingCRUD.access_token
             },
@@ -98,7 +115,16 @@ class TestSuiteProductListingCRUD:
     def test_create_product_listing_already_exists_same_id(self):
         response = client.post(
             "/product-listings",
-            json={"id": "testID", "listed_price": 12.3},
+            json={
+                "id": "testID",
+                "listed_price": 319.99,
+                "product": {
+                    "name": "Surface Pro 7",
+                    "brand": "Surface",
+                    "category": "REFURBISHED_PRODUCT",
+                    "sub_category": "LAPTOP",
+                },
+            },
             headers={
                 "Authorization": "Bearer " + ValueStorageProductListingCRUD.access_token
             },
@@ -125,7 +151,11 @@ class TestSuiteProductListingCRUD:
         )
         assert response.status_code == 200
         assert response.json()["id"] == "testID"
-        assert response.json()["listed_price"] == 12.3
+        assert response.json()["listed_price"] == 319.99
+        assert response.json()["product"]["name"] == "Surface Pro 7"
+        assert response.json()["product"]["brand"] == "Surface"
+        assert response.json()["product"]["category"] == "REFURBISHED_PRODUCT"
+        assert response.json()["product"]["sub_category"] == "LAPTOP"
 
     def test_get_product_listing_by_id_not_found(self):
         response = client.get(
@@ -140,14 +170,18 @@ class TestSuiteProductListingCRUD:
     def test_update_product_listing_by_id(self):
         response = client.patch(
             "/product-listings/testID",
-            json={"id": "testID", "listed_price": 1200},
+            json={"listed_price": 349.99},
             headers={
                 "Authorization": "Bearer " + ValueStorageProductListingCRUD.access_token
             },
         )
         assert response.status_code == 200
         assert response.json()["id"] == "testID"
-        assert response.json()["listed_price"] == 1200.0
+        assert response.json()["listed_price"] == 349.99
+        assert response.json()["product"]["name"] == "Surface Pro 7"
+        assert response.json()["product"]["brand"] == "Surface"
+        assert response.json()["product"]["category"] == "REFURBISHED_PRODUCT"
+        assert response.json()["product"]["sub_category"] == "LAPTOP"
 
     def test_delete_product_listing_by_id(self):
         for id in ValueStorageProductListingCRUD.product_listing_ids:

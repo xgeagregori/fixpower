@@ -2,12 +2,17 @@ from fastapi import HTTPException, status
 
 from app.models.product_listing import ProductListing
 from app.schemas.product_listing import ProductListingCreate, ProductListingUpdate
+from app.services.product_service import ProductService
+from app.services.product_service_impl import ProductServiceImpl
 from app.services.product_listing_service import ProductListingService
 
 from uuid import uuid4
 
 
 class ProductListingServiceImpl(ProductListingService):
+    def __init__(self):
+        self.product_service: ProductService = ProductServiceImpl()
+
     def create_product_listing(self, product_listing_create: ProductListingCreate):
         product_listing_already_exists = False
 
@@ -28,6 +33,17 @@ class ProductListingServiceImpl(ProductListingService):
         else:
             # If id is not provided, generate one
             product_listing_create.id = str(uuid4())
+
+        # Apply the proper create schema based on the product category
+        try:
+            product_listing_create.product = self.product_service.create_product(
+                product_listing_create.product
+            )
+        except:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="The specified details are not valid for this product category",
+            )
 
         product_listing = ProductListing(**product_listing_create.dict())
         product_listing.save()
