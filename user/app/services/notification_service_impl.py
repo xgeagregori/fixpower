@@ -1,6 +1,8 @@
 from fastapi import HTTPException, status
 
 from app.models.notification import Notification
+from app.models.notifier import Notifier
+from app.models.notification_decorators import AppNotifier, SMSNotifier, EmailNotifier
 from app.services.notification_service import NotificationService
 from app.services.user_service_impl import UserServiceImpl
 
@@ -15,9 +17,17 @@ class NotificationServiceImpl(NotificationService):
         generated_id = str(uuid4())
         notification = Notification(id=generated_id, **notification_create.dict())
 
+        # Send notification to user based on their settings
         user = self.user_service.get_user_by_id(user_id)
-        user.notifications.append(notification)
-        user.save()
+        settings = user.profile.settings
+
+        notifier: Notifier = AppNotifier(user_id)
+        if settings.sms_notifications:
+            notifier = SMSNotifier(notifier)
+        if settings.email_notifications:
+            notifier = EmailNotifier(notifier)
+
+        notifier.send(notification.attribute_values)
 
         return notification.id
 

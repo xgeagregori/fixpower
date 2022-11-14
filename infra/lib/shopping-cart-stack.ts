@@ -27,6 +27,7 @@ export class ShoppingCartStack extends cdk.Stack {
       environment: {
         TABLE_NAME: shoppingCartTable.tableName,
       },
+      timeout: cdk.Duration.seconds(10),
     });
 
     shoppingCartTable.grantReadWriteData(shoppingCartLambda);

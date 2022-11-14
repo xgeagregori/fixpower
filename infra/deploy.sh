@@ -1,6 +1,6 @@
 cdk deploy --all --outputs-file ./cdk-outputs.json --require-approval never
 
-apiGatewayUrl=$(jq -r '.ApiGatewayUrl' ./cdk-outputs.json)
+apiGatewayUrl=$(jq -r '.ApiStack.ApiGatewayUrl' ./cdk-outputs.json)
 
 gh secret set AWS_API_GATEWAY_URL -b $apiGatewayUrl
 

@@ -12,11 +12,21 @@ from app.dependencies.auth import (
 )
 from app.dependencies.auth import check_user_permissions
 from app.dependencies.user import UserDep
+from app.schemas.chat_message import (
+    ChatMessageCreate,
+    ChatMessageUpdate,
+    ChatMessageOut,
+)
+from app.schemas.product_listing import ProductListingCreate, ProductListingOut
+from app.schemas.notification import (
+    NotificationCreate,
+    NotificationUpdate,
+    NotificationOut,
+)
 from app.schemas.profile import ProfileUpdate, ProfileOut
-from app.schemas.review import ReviewCreate, ReviewUpdate
+from app.schemas.review import ReviewCreate, ReviewUpdate, ReviewOut
 from app.schemas.settings import SettingsOut
-from app.schemas.user import UserCreate, UserUpdate, UserInDB, UserOut
-from app.schemas.notification import NotificationCreate, NotificationUpdate
+from app.schemas.user import UserCreate, UserUpdate, UserInDB, UserOut, UserOutCurrent
 
 app = FastAPI(
     root_path="/prod/user-api/v1",
@@ -68,6 +78,10 @@ class UserController:
         # Remove hashed_password from response
         formatted_users = []
         for user in users:
+            user.favourites = [
+                ProductListingOut(**favourite.attribute_values)
+                for favourite in user.favourites
+            ]
             user.profile.settings = SettingsOut(
                 **user.profile.settings.attribute_values
             )
@@ -80,7 +94,24 @@ class UserController:
     @app.get("/users/me", tags=["users"])
     def get_users(current_user: UserInDB = Depends(get_current_user)):
         """Get authenticated user"""
-        return current_user.attribute_values
+        current_user.favourites = [
+            ProductListingOut(**favourite.attribute_values)
+            for favourite in current_user.favourites
+        ]
+        current_user.notifications = [
+            NotificationOut(**notification.attribute_values)
+            for notification in current_user.notifications
+        ]
+        current_user.chat_messages = [
+            ChatMessageOut(**chat_message.attribute_values)
+            for chat_message in current_user.chat_messages
+        ]
+        current_user.profile.settings = SettingsOut(
+            **current_user.profile.settings.attribute_values
+        )
+        current_user.profile = ProfileOut(**current_user.profile.attribute_values)
+        formatted_user = UserOutCurrent(**current_user.attribute_values)
+        return formatted_user
 
     @app.get("/users/{user_id}", tags=["users"])
     def get_user_by_id(
@@ -90,6 +121,10 @@ class UserController:
     ):
         """Get user by id"""
         user = self.user_service.get_user_by_id(user_id)
+        user.favourites = [
+            ProductListingOut(**favourite.attribute_values)
+            for favourite in user.favourites
+        ]
         user.profile.settings = SettingsOut(**user.profile.settings.attribute_values)
         user.profile = ProfileOut(**user.profile.attribute_values)
         formatted_user = UserOut(**user.attribute_values)
@@ -105,7 +140,23 @@ class UserController:
         """Update user by id"""
         check_user_permissions(current_user, user_id)
         user = self.user_service.update_user_by_id(user_id, user_update)
-        return user.attribute_values
+
+        user.favourites = [
+            ProductListingOut(**favourite.attribute_values)
+            for favourite in user.favourites
+        ]
+        user.notifications = [
+            NotificationOut(**notification.attribute_values)
+            for notification in user.notifications
+        ]
+        user.chat_messages = [
+            ChatMessageOut(**chat_message.attribute_values)
+            for chat_message in user.chat_messages
+        ]
+        user.profile.settings = SettingsOut(**user.profile.settings.attribute_values)
+        user.profile = ProfileOut(**user.profile.attribute_values)
+        formatted_user = UserOutCurrent(**user.attribute_values)
+        return formatted_user
 
     @app.delete("/users/{user_id}", tags=["users"])
     def delete_user_by_id(
@@ -146,7 +197,10 @@ class UserController:
         """Get notifications for user"""
         check_user_permissions(current_user, user_id)
         notifications = self.notification_service.get_notifications_by_user_id(user_id)
-        return [notification.attribute_values for notification in notifications]
+        return [
+            NotificationOut(**notification.attribute_values)
+            for notification in notifications
+        ]
 
     @app.get("/users/{user_id}/notifications/{notification_id}", tags=["notifications"])
     def get_notification_by_id(
@@ -160,7 +214,7 @@ class UserController:
         notification = self.notification_service.get_notification_by_id(
             user_id, notification_id
         )
-        return notification.attribute_values
+        return NotificationOut(**notification.attribute_values)
 
     @app.patch(
         "/users/{user_id}/notifications/{notification_id}", tags=["notifications"]
@@ -177,7 +231,7 @@ class UserController:
         notification = self.notification_service.update_notification_by_id(
             user_id, notification_id, notification_update
         )
-        return notification.attribute_values
+        return NotificationOut(**notification.attribute_values)
 
     @app.delete(
         "/users/{user_id}/notifications/{notification_id}", tags=["notifications"]
@@ -249,7 +303,7 @@ class UserController:
     ):
         """Get reviews for user"""
         reviews = self.review_service.get_reviews_by_user_id(user_id)
-        return [review.attribute_values for review in reviews]
+        return [ReviewOut(**review.attribute_values) for review in reviews]
 
     @app.get("/users/{user_id}/reviews/{review_id}", tags=["reviews"])
     def get_review_by_id(
@@ -260,7 +314,7 @@ class UserController:
     ):
         """Get review by id for user"""
         review = self.review_service.get_review_by_id(user_id, review_id)
-        return review.attribute_values
+        return ReviewOut(**review.attribute_values)
 
     @app.patch("/users/{user_id}/reviews/{review_id}", tags=["reviews"])
     def update_review_by_id(
@@ -276,7 +330,7 @@ class UserController:
         review = self.review_service.update_review_by_id(
             user_id, review_id, review_update
         )
-        return review.attribute_values
+        return ReviewOut(**review.attribute_values)
 
     @app.delete("/users/{user_id}/reviews/{review_id}", tags=["reviews"])
     def delete_review_by_id(
@@ -290,6 +344,140 @@ class UserController:
         check_user_permissions(current_user, review.sender_id)
         review_id = self.review_service.delete_review_by_id(user_id, review_id)
         return {"id": review_id}
+
+    # ChatMessage routes
+    @app.post(
+        "/users/{user_id}/chat-messages",
+        status_code=status.HTTP_201_CREATED,
+        tags=["chat-messages"],
+    )
+    def create_chat_message(
+        user_id: str,
+        chat_message_create: ChatMessageCreate,
+        current_user: UserInDB = Depends(get_current_user),
+        self=Depends(UserDep),
+    ):
+        """Create chat message"""
+        # The sender of the chat message must be the current user
+        check_user_permissions(current_user, chat_message_create.sender_id)
+        chat_message_id = self.chat_message_service.create_chat_message(
+            user_id, chat_message_create
+        )
+        return {"id": chat_message_id}
+
+    @app.get("/users/{user_id}/chat-messages", tags=["chat-messages"])
+    def get_chat_messages_by_user_id(
+        user_id: str,
+        current_user: UserInDB = Depends(get_current_user),
+        self=Depends(UserDep),
+    ):
+        """Get chat messages for user"""
+        check_user_permissions(current_user, user_id)
+        chat_messages = self.chat_message_service.get_chat_messages_by_user_id(user_id)
+        return [
+            ChatMessageOut(**chat_message.attribute_values)
+            for chat_message in chat_messages
+        ]
+
+    @app.get("/users/{user_id}/chat-messages/{chat_message_id}", tags=["chat-messages"])
+    def get_chat_message_by_id(
+        user_id: str,
+        chat_message_id: str,
+        current_user: UserInDB = Depends(get_current_user),
+        self=Depends(UserDep),
+    ):
+        """Get chat message by id for user"""
+        check_user_permissions(current_user, user_id)
+        chat_message = self.chat_message_service.get_chat_message_by_id(
+            user_id, chat_message_id
+        )
+        return ChatMessageOut(**chat_message.attribute_values)
+
+    @app.patch(
+        "/users/{user_id}/chat-messages/{chat_message_id}", tags=["chat-messages"]
+    )
+    def update_chat_message_by_id(
+        user_id: str,
+        chat_message_id: str,
+        chat_message_update: ChatMessageUpdate,
+        current_user: UserInDB = Depends(get_current_user),
+        self=Depends(UserDep),
+    ):
+        """Update chat message by id for user"""
+        chat_message = self.chat_message_service.get_chat_message_by_id(
+            user_id, chat_message_id
+        )
+        check_user_permissions(current_user, chat_message.sender_id)
+        chat_message = self.chat_message_service.update_chat_message_by_id(
+            user_id, chat_message_id, chat_message_update
+        )
+        return ChatMessageOut(**chat_message.attribute_values)
+
+    @app.delete(
+        "/users/{user_id}/chat-messages/{chat_message_id}", tags=["chat-messages"]
+    )
+    def delete_chat_message_by_id(
+        user_id: str,
+        chat_message_id: str,
+        current_user: UserInDB = Depends(get_current_user),
+        self=Depends(UserDep),
+    ):
+        """Delete chat message by id for user"""
+        chat_message = self.chat_message_service.get_chat_message_by_id(
+            user_id, chat_message_id
+        )
+        check_user_permissions(current_user, chat_message.sender_id)
+        chat_message_id = self.chat_message_service.delete_chat_message_by_id(
+            user_id, chat_message_id
+        )
+        return {"id": chat_message_id}
+
+    # Favourite routes
+    @app.post(
+        "/users/{user_id}/favourites",
+        status_code=status.HTTP_201_CREATED,
+        tags=["favourites"],
+    )
+    def create_favourite(
+        user_id: str,
+        favourite_create: ProductListingCreate,
+        current_user: UserInDB = Depends(get_current_user),
+        self=Depends(UserDep),
+    ):
+        """Create favourite"""
+        # The sender of the favourite must be the current user
+        check_user_permissions(current_user, user_id)
+        favourite_id = self.favourite_service.create_favourite(
+            user_id, favourite_create
+        )
+        return {"id": favourite_id}
+
+    @app.get("/users/{user_id}/favourites", tags=["favourites"])
+    def get_favourites_by_user_id(
+        user_id: str,
+        current_user: UserInDB = Depends(get_current_user),
+        self=Depends(UserDep),
+    ):
+        """Get favourites for user"""
+        check_user_permissions(current_user, user_id)
+        favourites = self.favourite_service.get_favourites_by_user_id(user_id)
+        return [
+            ProductListingOut(**favourite.attribute_values) for favourite in favourites
+        ]
+
+    @app.delete("/users/{user_id}/favourites/{favourite_id}", tags=["favourites"])
+    def delete_favourite_by_id(
+        user_id: str,
+        favourite_id: str,
+        current_user: UserInDB = Depends(get_current_user),
+        self=Depends(UserDep),
+    ):
+        """Delete favourite by id for user"""
+        check_user_permissions(current_user, user_id)
+        favourite_id = self.favourite_service.delete_favourite_by_id(
+            user_id, favourite_id
+        )
+        return {"id": favourite_id}
 
 
 app.include_router(router)

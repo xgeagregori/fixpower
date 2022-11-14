@@ -38,6 +38,7 @@ export class UserStack extends cdk.Stack {
       environment: {
         TABLE_NAME: userTable.tableName,
       },
+      timeout: cdk.Duration.seconds(10),
     });
 
     userTable.grantReadWriteData(userLambda);

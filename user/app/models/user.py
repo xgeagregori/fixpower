@@ -7,7 +7,9 @@ from pynamodb.attributes import (
     BooleanAttribute,
 )
 
+from app.models.chat_message import ChatMessage
 from app.models.notification import Notification
+from app.models.product_listing import ProductListing
 from app.models.profile import ProfileAttribute
 
 import datetime
@@ -35,8 +37,11 @@ class User(Model):
     email = UnicodeAttribute()
     hashed_password = UnicodeAttribute()
     profile = ProfileAttribute()
+    favourites = ListAttribute(of=ProductListing, default=[])
     notifications = ListAttribute(of=Notification, default=[])
+    chat_messages = ListAttribute(of=ChatMessage, default=[])
     is_admin = BooleanAttribute()
+    is_banned = BooleanAttribute()
     created_at = UTCDateTimeAttribute(default=datetime.datetime.now)
 
     user_index = UserIndex()
