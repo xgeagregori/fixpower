@@ -30,7 +30,7 @@ export class ProductListingStack extends cdk.Stack {
         environment: {
           TABLE_NAME: productListingTable.tableName,
         },
-        timeout: cdk.Duration.seconds(10),
+        timeout: cdk.Duration.seconds(30),
       }
     );
 

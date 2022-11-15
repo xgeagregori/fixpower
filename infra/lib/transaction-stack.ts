@@ -27,7 +27,7 @@ export class TransactionStack extends cdk.Stack {
       environment: {
         TABLE_NAME: transactionTable.tableName,
       },
-      timeout: cdk.Duration.seconds(10),
+      timeout: cdk.Duration.seconds(30),
     });
 
     transactionTable.grantReadWriteData(transactionLambda);
