@@ -1,5 +1,4 @@
 from app.schemas.profile import ProfileUpdate
-from app.schemas.settings import SettingsUpdate
 from app.services.profile_service import ProfileService
 from app.services.user_service_impl import UserServiceImpl
 
