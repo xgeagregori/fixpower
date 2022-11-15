@@ -81,6 +81,8 @@ jobs:
           JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
           JWT_ALGORITHM: ${{ secrets.JWT_ALGORITHM }}
           JWT_ACCESS_TOKEN_EXPIRE_MINUTES: ${{ secrets.JWT_ACCESS_TOKEN_EXPIRE_MINUTES }}
+          SERVICE_USERNAME: ${{ secrets.SERVICE_USERNAME }}
+          SERVICE_PASSWORD: ${{ secrets.SERVICE_PASSWORD }}
         run: |
           npm install -g aws-cdk
           npm install
@@ -91,4 +93,4 @@ jobs:
           aws lambda update-function-code --function-name $AWS_USER_LAMBDA_ARN --zip-file fileb://user.zip
           aws lambda publish-layer-version --layer-name user --zip-file fileb://user-layer.zip
           LAYER_ARN=$(aws lambda list-layer-versions --layer-name user --query 'LayerVersions[0].LayerVersionArn' --output text)
-          aws lambda update-function-configuration --function-name $AWS_USER_LAMBDA_ARN --layers $LAYER_ARN --handler app.user_controller.handler --environment "Variables={AWS_ACCESS_KEY_ID_LAMBDA=$AWS_ACCESS_KEY_ID,AWS_SECRET_ACCESS_KEY_LAMBDA=$AWS_SECRET_ACCESS_KEY,AWS_USER_TABLE_NAME=$AWS_USER_TABLE_NAME,AWS_API_GATEWAY_URL=$AWS_API_GATEWAY_URL,JWT_SECRET_KEY=$JWT_SECRET_KEY,JWT_ALGORITHM=$JWT_ALGORITHM,JWT_ACCESS_TOKEN_EXPIRE_MINUTES=$JWT_ACCESS_TOKEN_EXPIRE_MINUTES}"
+          aws lambda update-function-configuration --function-name $AWS_USER_LAMBDA_ARN --layers $LAYER_ARN --handler app.user_controller.handler --environment "Variables={AWS_ACCESS_KEY_ID_LAMBDA=$AWS_ACCESS_KEY_ID,AWS_SECRET_ACCESS_KEY_LAMBDA=$AWS_SECRET_ACCESS_KEY,AWS_USER_TABLE_NAME=$AWS_USER_TABLE_NAME,AWS_API_GATEWAY_URL=$AWS_API_GATEWAY_URL,JWT_SECRET_KEY=$JWT_SECRET_KEY,JWT_ALGORITHM=$JWT_ALGORITHM,JWT_ACCESS_TOKEN_EXPIRE_MINUTES=$JWT_ACCESS_TOKEN_EXPIRE_MINUTES,SERVICE_USERNAME=$SERVICE_USERNAME,SERVICE_PASSWORD=$SERVICE_PASSWORD}"

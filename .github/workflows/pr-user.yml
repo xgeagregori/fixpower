@@ -37,5 +37,7 @@ jobs:
           JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
           JWT_ALGORITHM: ${{ secrets.JWT_ALGORITHM }}
           JWT_ACCESS_TOKEN_EXPIRE_MINUTES: ${{ secrets.JWT_ACCESS_TOKEN_EXPIRE_MINUTES }}
+          SERVICE_USERNAME: ${{ secrets.SERVICE_USERNAME }}
+          SERVICE_PASSWORD: ${{ secrets.SERVICE_PASSWORD }}
         run: |
           pipenv run pytest

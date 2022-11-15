@@ -34,5 +34,7 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_SHOPPING_CART_TABLE_NAME: ${{ secrets.AWS_SHOPPING_CART_TABLE_NAME }}
           AWS_API_GATEWAY_URL: ${{ secrets.AWS_API_GATEWAY_URL }}
+          SERVICE_USERNAME: ${{ secrets.SERVICE_USERNAME }}
+          SERVICE_PASSWORD: ${{ secrets.SERVICE_PASSWORD }}
         run: |
           pipenv run pytest

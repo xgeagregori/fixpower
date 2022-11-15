@@ -78,6 +78,8 @@ jobs:
           AWS_SHOPPING_CART_LAMBDA_ARN: ${{ secrets.AWS_SHOPPING_CART_LAMBDA_ARN }}
           AWS_SHOPPING_CART_TABLE_NAME: ${{ secrets.AWS_SHOPPING_CART_TABLE_NAME }}
           AWS_API_GATEWAY_URL: ${{ secrets.AWS_API_GATEWAY_URL }}
+          SERVICE_USERNAME: ${{ secrets.SERVICE_USERNAME }}
+          SERVICE_PASSWORD: ${{ secrets.SERVICE_PASSWORD }}
         run: |
           npm install -g aws-cdk
           npm install
@@ -88,4 +90,4 @@ jobs:
           aws lambda update-function-code --function-name $AWS_SHOPPING_CART_LAMBDA_ARN --zip-file fileb://shopping-cart.zip
           aws lambda publish-layer-version --layer-name shopping-cart --zip-file fileb://shopping-cart-layer.zip
           LAYER_ARN=$(aws lambda list-layer-versions --layer-name shopping-cart --query 'LayerVersions[0].LayerVersionArn' --output text)
-          aws lambda update-function-configuration --function-name $AWS_SHOPPING_CART_LAMBDA_ARN --layers $LAYER_ARN --handler app.shopping_cart_controller.handler --environment "Variables={AWS_ACCESS_KEY_ID_LAMBDA=$AWS_ACCESS_KEY_ID,AWS_SECRET_ACCESS_KEY_LAMBDA=$AWS_SECRET_ACCESS_KEY,AWS_SHOPPING_CART_TABLE_NAME=$AWS_SHOPPING_CART_TABLE_NAME, AWS_API_GATEWAY_URL=$AWS_API_GATEWAY_URL}"
+          aws lambda update-function-configuration --function-name $AWS_SHOPPING_CART_LAMBDA_ARN --layers $LAYER_ARN --handler app.shopping_cart_controller.handler --environment "Variables={AWS_ACCESS_KEY_ID_LAMBDA=$AWS_ACCESS_KEY_ID,AWS_SECRET_ACCESS_KEY_LAMBDA=$AWS_SECRET_ACCESS_KEY,AWS_SHOPPING_CART_TABLE_NAME=$AWS_SHOPPING_CART_TABLE_NAME, AWS_API_GATEWAY_URL=$AWS_API_GATEWAY_URL,SERVICE_USERNAME=$SERVICE_USERNAME,SERVICE_PASSWORD=$SERVICE_PASSWORD}"

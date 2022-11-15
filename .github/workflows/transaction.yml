@@ -78,6 +78,8 @@ jobs:
           AWS_TRANSACTION_LAMBDA_ARN: ${{ secrets.AWS_TRANSACTION_LAMBDA_ARN }}
           AWS_TRANSACTION_TABLE_NAME: ${{ secrets.AWS_TRANSACTION_TABLE_NAME }}
           AWS_API_GATEWAY_URL: ${{ secrets.AWS_API_GATEWAY_URL }}
+          SERVICE_USERNAME: ${{ secrets.SERVICE_USERNAME }}
+          SERVICE_PASSWORD: ${{ secrets.SERVICE_PASSWORD }}
         run: |
           npm install -g aws-cdk
           npm install
@@ -88,4 +90,4 @@ jobs:
           aws lambda update-function-code --function-name $AWS_TRANSACTION_LAMBDA_ARN --zip-file fileb://transaction.zip
           aws lambda publish-layer-version --layer-name transaction --zip-file fileb://transaction-layer.zip
           LAYER_ARN=$(aws lambda list-layer-versions --layer-name transaction --query 'LayerVersions[0].LayerVersionArn' --output text)
-          aws lambda update-function-configuration --function-name $AWS_TRANSACTION_LAMBDA_ARN --layers $LAYER_ARN --handler app.transaction_controller.handler --environment "Variables={AWS_ACCESS_KEY_ID_LAMBDA=$AWS_ACCESS_KEY_ID,AWS_SECRET_ACCESS_KEY_LAMBDA=$AWS_SECRET_ACCESS_KEY,AWS_TRANSACTION_TABLE_NAME=$AWS_TRANSACTION_TABLE_NAME, AWS_API_GATEWAY_URL=$AWS_API_GATEWAY_URL}"
+          aws lambda update-function-configuration --function-name $AWS_TRANSACTION_LAMBDA_ARN --layers $LAYER_ARN --handler app.transaction_controller.handler --environment "Variables={AWS_ACCESS_KEY_ID_LAMBDA=$AWS_ACCESS_KEY_ID,AWS_SECRET_ACCESS_KEY_LAMBDA=$AWS_SECRET_ACCESS_KEY,AWS_TRANSACTION_TABLE_NAME=$AWS_TRANSACTION_TABLE_NAME, AWS_API_GATEWAY_URL=$AWS_API_GATEWAY_URL,SERVICE_USERNAME=$SERVICE_USERNAME,SERVICE_PASSWORD=$SERVICE_PASSWORD}"
