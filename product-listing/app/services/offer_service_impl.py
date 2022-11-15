@@ -2,8 +2,8 @@ from fastapi import HTTPException, status
 
 from app.models.offer import Offer
 from app.schemas.offer import OfferCreate, OfferUpdate, OfferState
-from app.services.product_listing_service_impl import ProductListingServiceImpl
 from app.services.offer_service import OfferService
+from app.services.product_listing_service_impl import ProductListingServiceImpl
 
 from uuid import uuid4
 
