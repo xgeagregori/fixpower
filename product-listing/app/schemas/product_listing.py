@@ -15,6 +15,7 @@ class ProductListingCreate(BaseModel):
     product: Union[ComponentCreate, DamagedProductCreate, RefurbishedProductCreate]
     listed_price: float
     seller: UserCreate
+    buyer: Optional[UserCreate]
 
 
 class ProductListingUpdate(BaseModel):
