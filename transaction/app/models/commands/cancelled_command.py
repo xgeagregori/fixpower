@@ -1,6 +1,7 @@
+from fastapi import HTTPException, status
+
 from app.dependencies.auth import authenticate_service
 from app.models.commands.command import Command
-from app.schemas.transaction import TransactionState
 
 import os
 import requests
@@ -13,13 +14,22 @@ class CancelledCommand(Command):
     def execute(self, transaction):
         product_listing = self.get_product_listing(transaction)
 
-        self.send_notification_seller(product_listing)
-        self.send_notification_buyer(product_listing)
+        if (
+            product_listing["seller"] is not None
+            and product_listing["buyer"] is not None
+        ):
+            self.send_notification_seller(product_listing)
+            self.send_notification_buyer(product_listing)
+        else:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Product listing does not have a seller or buyer",
+            )
 
     def get_product_listing(self, transaction):
         product_listing = requests.get(
             os.getenv("AWS_API_GATEWAY_URL")
-            + f"product-listing-api/v1/product-listings/{transaction.product_listing.id}",
+            + f"/product-listing-api/v1/product-listings/{transaction.product_listing.id}",
             headers={"Authorization": f"Bearer {self.access_token}"},
         )
 
