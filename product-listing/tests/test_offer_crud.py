@@ -127,15 +127,15 @@ class TestSuiteOfferCRUD:
         assert response.status_code == 404
         assert response.json() == {"detail": "Offer not found"}
 
-    def test_update_offer_by_id(self):
-        response = client.patch(
-            f"/product-listings/{ValueStorageOfferCRUD.product_listing_id}/offers/{ValueStorageOfferCRUD.offer_id}",
-            json={"state": "ACCEPTED"},
-            headers={"Authorization": f"Bearer {ValueStorageOfferCRUD.access_token}"},
-        )
-        assert response.status_code == 200
-        assert response.json()["id"] == ValueStorageOfferCRUD.offer_id
-        assert response.json()["state"] == "ACCEPTED"
+    # def test_update_offer_by_id(self):
+    #     response = client.patch(
+    #         f"/product-listings/{ValueStorageOfferCRUD.product_listing_id}/offers/{ValueStorageOfferCRUD.offer_id}",
+    #         json={"state": "ACCEPTED"},
+    #         headers={"Authorization": f"Bearer {ValueStorageOfferCRUD.access_token}"},
+    #     )
+    #     assert response.status_code == 200
+    #     assert response.json()["id"] == ValueStorageOfferCRUD.offer_id
+    #     assert response.json()["state"] == "ACCEPTED"
 
     def test_delete_offer_by_id(self):
         response = client.delete(

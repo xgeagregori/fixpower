@@ -3,7 +3,7 @@ from enum import Enum
 from app.models.payment.applepay_strategy import ApplePayStrategy
 from app.models.payment.creditcard_strategy import CreditCardStrategy
 from app.models.payment.googlepay_strategy import GooglePayStrategy
-from app.models.payment.paypal_strategy import PayPalStrategy
+from app.models.payment.paypal_strategy import PaypalStrategy
 from app.services.payment_service import PaymentService, PaymentStrategyFactory
 
 
@@ -45,4 +45,4 @@ class GooglePayStrategyFactory(PaymentStrategyFactory):
 
 class PaypalStrategyFactory(PaymentStrategyFactory):
     def create_payment_strategy(self):
-        return PayPalStrategy()
+        return PaypalStrategy()
