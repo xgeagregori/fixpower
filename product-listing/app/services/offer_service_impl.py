@@ -55,10 +55,9 @@ class OfferServiceImpl(OfferService):
                             status_code=status.HTTP_400_BAD_REQUEST,
                             detail="Product already sold",
                         )
-                    else:
-                        self.product_listing_service.process_payment(offer.sender.id)
-                        offer.state = offer_update.state
-                        product_listing.sold = True
+                    self.product_listing_service.process_payment(offer.sender.id)
+                    offer.state = offer_update.state
+                    product_listing.sold = True
         product_listing.save()
         return offer
 

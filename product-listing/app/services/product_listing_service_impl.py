@@ -1,5 +1,6 @@
 from fastapi import HTTPException, status
 
+from app.dependencies.auth import authenticate_service
 from app.models.payment.payment_processor import PaymentProcessor
 from app.models.product_listing import ProductListing
 from app.schemas.product_listing import ProductListingCreate, ProductListingUpdate
@@ -18,6 +19,8 @@ class ProductListingServiceImpl(ProductListingService):
     def __init__(self):
         self.payment_service: PaymentService = PaymentServiceImpl()
         self.product_service: ProductService = ProductServiceImpl()
+
+        self.access_token = authenticate_service()
 
     def create_product_listing(self, product_listing_create: ProductListingCreate):
         product_listing_already_exists = False
@@ -78,6 +81,11 @@ class ProductListingServiceImpl(ProductListingService):
     ):
         product_listing = self.get_product_listing_by_id(id)
         for key, value in product_listing_update.dict().items():
+            if product_listing.sold:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="Product already sold",
+                )
             if key == "buyer":
                 self.process_payment(value["id"])
 
@@ -95,10 +103,12 @@ class ProductListingServiceImpl(ProductListingService):
 
     def process_payment(self, user_id):
         user = requests.get(
-            os.getenv("AWS_API_GATEWAY_URL") + "/user-api/v1/users/" + user_id
+            os.getenv("AWS_API_GATEWAY_URL") + "/user-api/v1/users/" + user_id,
+            headers={"Authorization": f"Bearer {self.access_token}"},
         ).json()
-        if user["settings"]["payment_method"]:
-            payment_method = user["settings"]["payment_method"]
+
+        if user["profile"]["settings"]["payment_method"]:
+            payment_method = user["profile"]["settings"]["payment_method"]
         else:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
@@ -108,10 +118,10 @@ class ProductListingServiceImpl(ProductListingService):
         payment_strategy = self.payment_service.create_payment_strategy(payment_method)
         payment_processor = PaymentProcessor(payment_strategy)
 
-        try:
-            payment_processor.process()
-        except:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Payment failed",
-            )
+        # try:
+        payment_processor.process()
+        # except:
+        #     raise HTTPException(
+        #         status_code=status.HTTP_400_BAD_REQUEST,
+        #         detail="Payment failed",
+        #     )
