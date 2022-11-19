@@ -2,11 +2,13 @@ from pydantic import BaseModel
 from typing import Optional
 from enum import Enum
 
+
 class PaymentMethod(str, Enum):
     APPLE_PAY = "APPLE_PAY"
     CREDIT_CARD = "CREDIT_CARD"
     GOOGLE_PAY = "GOOGLE_PAY"
     PAYPAL = "PAYPAL"
+
 
 class SettingsCreate(BaseModel):
     sms_notifications: Optional[bool] = True
