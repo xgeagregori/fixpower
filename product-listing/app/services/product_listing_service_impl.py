@@ -94,15 +94,17 @@ class ProductListingServiceImpl(ProductListingService):
         return id
 
     def process_payment(self, user_id):
-        user = requests.get(os.getenv("AWS_API_GATEWAY_URL") + "/user-api/v1/users/" + user_id).json()
+        user = requests.get(
+            os.getenv("AWS_API_GATEWAY_URL") + "/user-api/v1/users/" + user_id
+        ).json()
         if user["settings"]["payment_method"]:
             payment_method = user["settings"]["payment_method"]
         else:
             raise HTTPException(
-                        status_code=status.HTTP_400_BAD_REQUEST,
-                        detail="User has no payment method",
-                    )
-                
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="User has no payment method",
+            )
+
         payment_strategy = self.payment_service.create_payment_strategy(payment_method)
         payment_processor = PaymentProcessor(payment_strategy)
 
@@ -110,6 +112,6 @@ class ProductListingServiceImpl(ProductListingService):
             payment_processor.process()
         except:
             raise HTTPException(
-                        status_code=status.HTTP_400_BAD_REQUEST,
-                        detail="Payment failed",
-                    )
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Payment failed",
+            )

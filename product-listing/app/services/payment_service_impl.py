@@ -6,6 +6,7 @@ from app.models.payment.googlepay_strategy import GooglePayStrategy
 from app.models.payment.paypal_strategy import PayPalStrategy
 from app.services.payment_service import PaymentService, PaymentStrategyFactory
 
+
 class PaymentMethod(Enum):
     APPLE_PAY = "APPLE_PAY"
     CREDIT_CARD = "CREDIT_CARD"
