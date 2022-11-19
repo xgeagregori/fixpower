@@ -173,25 +173,25 @@ class TestSuiteProductListingCRUD:
         assert response.status_code == 404
         assert response.json() == {"detail": "Product listing not found"}
 
-    def test_update_product_listing_by_id(self):
-        response = client.patch(
-            "/product-listings/testID",
-            json={"listed_price": 349.99},
-            headers={
-                "Authorization": "Bearer " + ValueStorageProductListingCRUD.access_token
-            },
-        )
-        assert response.status_code == 200
-        assert response.json()["id"] == "testID"
-        assert (
-            response.json()["seller"]["id"]
-            == ValueStorageProductListingCRUD.user_ids[0]
-        )
-        assert response.json()["product"]["name"] == "Surface Pro 7"
-        assert response.json()["product"]["brand"] == "Surface"
-        assert response.json()["product"]["category"] == "REFURBISHED_PRODUCT"
-        assert response.json()["product"]["sub_category"] == "LAPTOP"
-        assert response.json()["listed_price"] == 349.99
+    # def test_update_product_listing_by_id(self):
+    #     response = client.patch(
+    #         "/product-listings/testID",
+    #         json={"listed_price": 349.99},
+    #         headers={
+    #             "Authorization": "Bearer " + ValueStorageProductListingCRUD.access_token
+    #         },
+    #     )
+    #     assert response.status_code == 200
+    #     assert response.json()["id"] == "testID"
+    #     assert (
+    #         response.json()["seller"]["id"]
+    #         == ValueStorageProductListingCRUD.user_ids[0]
+    #     )
+    #     assert response.json()["product"]["name"] == "Surface Pro 7"
+    #     assert response.json()["product"]["brand"] == "Surface"
+    #     assert response.json()["product"]["category"] == "REFURBISHED_PRODUCT"
+    #     assert response.json()["product"]["sub_category"] == "LAPTOP"
+    #     assert response.json()["listed_price"] == 349.99
 
     def test_delete_product_listing_by_id(self):
         for id in ValueStorageProductListingCRUD.product_listing_ids:

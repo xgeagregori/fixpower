@@ -56,6 +56,7 @@ class OfferServiceImpl(OfferService):
                             detail="Product already sold",
                         )
                     else:
+                        self.product_listing_service.process_payment(offer.sender.id)
                         offer.state = offer_update.state
                         product_listing.sold = True
         product_listing.save()
