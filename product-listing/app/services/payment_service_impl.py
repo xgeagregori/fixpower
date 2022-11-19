@@ -6,7 +6,7 @@ from app.models.payment.googlepay_strategy import GooglePayStrategy
 from app.models.payment.paypal_strategy import PayPalStrategy
 from app.services.payment_service import PaymentService, PaymentStrategyFactory
 
-class PaymentSetting(Enum):
+class PaymentMethod(Enum):
     APPLE_PAY = "APPLE_PAY"
     CREDIT_CARD = "CREDIT_CARD"
     GOOGLE_PAY = "GOOGLE_PAY"
@@ -15,13 +15,13 @@ class PaymentSetting(Enum):
 
 class PaymentServiceImpl(PaymentService):
     def create_payment_strategy(self, payment_method):
-        if payment_method == PaymentSetting.APPLE_PAY:
+        if payment_method == PaymentMethod.APPLE_PAY:
             product = ApplePayStrategyFactory().create_payment_strategy()
-        elif payment_method == PaymentSetting.CREDIT_CARD:
+        elif payment_method == PaymentMethod.CREDIT_CARD:
             product = CreditCardStrategyFactory().create_payment_strategy()
-        elif payment_method == PaymentSetting.GOOGLE_PAY:
+        elif payment_method == PaymentMethod.GOOGLE_PAY:
             product = GooglePayStrategyFactory().create_payment_strategy()
-        elif payment_method == PaymentSetting.PAYPAL:
+        elif payment_method == PaymentMethod.PAYPAL:
             product = PaypalStrategyFactory().create_payment_strategy()
 
         return product
