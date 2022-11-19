@@ -4,7 +4,6 @@ from pynamodb.attributes import (
     NumberAttribute,
     ListAttribute,
     BooleanAttribute,
-    MapAttribute,
 )
 
 from app.models.offer import Offer

@@ -1,3 +1,5 @@
+from app.services.payment_service import PaymentService
+from app.services.payment_service_impl import PaymentServiceImpl
 from app.services.product_service import ProductService
 from app.services.product_service_impl import ProductServiceImpl
 from app.services.product_listing_service import ProductListingService
@@ -12,5 +14,6 @@ class ProductListingDep:
             ProductListingServiceImpl()
         )
 
+        self.payment_service: PaymentService = PaymentServiceImpl()
         self.product_service: ProductService = ProductServiceImpl()
         self.offer_service: OfferService = OfferServiceImpl()

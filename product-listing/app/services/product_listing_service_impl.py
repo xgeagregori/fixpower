@@ -1,16 +1,22 @@
 from fastapi import HTTPException, status
 
+from app.models.payment.payment_processor import PaymentProcessor
 from app.models.product_listing import ProductListing
 from app.schemas.product_listing import ProductListingCreate, ProductListingUpdate
+from app.services.payment_service import PaymentService
+from app.services.payment_service_impl import PaymentServiceImpl
 from app.services.product_service import ProductService
 from app.services.product_service_impl import ProductServiceImpl
 from app.services.product_listing_service import ProductListingService
 
+import os
+import requests
 from uuid import uuid4
 
 
 class ProductListingServiceImpl(ProductListingService):
     def __init__(self):
+        self.payment_service: PaymentService = PaymentServiceImpl()
         self.product_service: ProductService = ProductServiceImpl()
 
     def create_product_listing(self, product_listing_create: ProductListingCreate):
@@ -72,10 +78,12 @@ class ProductListingServiceImpl(ProductListingService):
     ):
         product_listing = self.get_product_listing_by_id(id)
         for key, value in product_listing_update.dict().items():
+            if key == "buyer":
+                self.process_payment(value["id"])
+
+                product_listing.sold = True
             if value:
                 setattr(product_listing, key, value)
-            if key == "buyer":
-                product_listing.sold = True
 
         product_listing.save()
         return product_listing
@@ -84,3 +92,24 @@ class ProductListingServiceImpl(ProductListingService):
         product_listing = self.get_product_listing_by_id(id)
         product_listing.delete()
         return id
+
+    def process_payment(self, user_id):
+        user = requests.get(os.getenv("AWS_API_GATEWAY_URL") + "/user-api/v1/users/" + user_id).json()
+        if user["settings"]["payment_method"]:
+            payment_method = user["settings"]["payment_method"]
+        else:
+            raise HTTPException(
+                        status_code=status.HTTP_400_BAD_REQUEST,
+                        detail="User has no payment method",
+                    )
+                
+        payment_strategy = self.payment_service.create_payment_strategy(payment_method)
+        payment_processor = PaymentProcessor(payment_strategy)
+
+        try:
+            payment_processor.process()
+        except:
+            raise HTTPException(
+                        status_code=status.HTTP_400_BAD_REQUEST,
+                        detail="Payment failed",
+                    )
