@@ -60,6 +60,7 @@ class ProductListingController:
         self=Depends(ProductListingDep),
     ):
         """Create product listing"""
+        check_user_permissions(current_user, product_listing_create.seller.id)
         product_listing_id = self.product_listing_service.create_product_listing(
             product_listing_create
         )
@@ -139,6 +140,7 @@ class ProductListingController:
         product_listing = self.product_listing_service.update_product_listing_by_id(
             product_listing_id, product_listing_update
         )
+        check_user_permissions(current_user, product_listing.seller.id)
 
         for offer in product_listing.offers:
             offer.sender = UserOut(**offer.sender.attribute_values)
@@ -163,6 +165,11 @@ class ProductListingController:
         self=Depends(ProductListingDep),
     ):
         """Delete product listing by id"""
+        product_listing = self.product_listing_service.get_product_listing_by_id(
+            product_listing_id
+        )
+        check_user_permissions(current_user, product_listing.seller.id)
+
         product_listing_id = self.product_listing_service.delete_product_listing_by_id(
             product_listing_id
         )
@@ -176,15 +183,20 @@ class ProductListingController:
     def create_offer(
         product_listing_id: str,
         offer_create: OfferCreate,
+        current_user=Depends(get_current_user),
         self=Depends(ProductListingDep),
     ):
         """Create offer"""
+        check_user_permissions(current_user, offer_create.sender.id)
+
         offer_id = self.offer_service.create_offer(product_listing_id, offer_create)
         return {"id": offer_id}
 
     @app.get("/product-listings/{product_listing_id}/offers", tags=["offers"])
     def get_offers_by_product_listing_id(
-        product_listing_id: str, self=Depends(ProductListingDep)
+        product_listing_id: str,
+        current_user=Depends(get_current_user),
+        self=Depends(ProductListingDep),
     ):
         """Get offers by product listing id"""
         offers = self.offer_service.get_offers_by_product_listing_id(product_listing_id)
@@ -202,7 +214,10 @@ class ProductListingController:
         "/product-listings/{product_listing_id}/offers/{offer_id}", tags=["offers"]
     )
     def get_offer_by_id(
-        product_listing_id: str, offer_id: str, self=Depends(ProductListingDep)
+        product_listing_id: str,
+        offer_id: str,
+        current_user=Depends(get_current_user),
+        self=Depends(ProductListingDep),
     ):
         """Get offer by id"""
         offer = self.offer_service.get_offer_by_id(product_listing_id, offer_id)
@@ -220,6 +235,7 @@ class ProductListingController:
         product_listing_id: str,
         offer_id: str,
         offer_update: OfferUpdate,
+        current_user=Depends(get_current_user),
         self=Depends(ProductListingDep),
     ):
         """Update offer"""
@@ -237,9 +253,15 @@ class ProductListingController:
         "/product-listings/{product_listing_id}/offers/{offer_id}", tags=["offers"]
     )
     def delete_offer_by_id(
-        product_listing_id: str, offer_id: str, self=Depends(ProductListingDep)
+        product_listing_id: str,
+        offer_id: str,
+        current_user=Depends(get_current_user),
+        self=Depends(ProductListingDep),
     ):
         """Delete offer"""
+        offer = self.offer_service.get_offer_by_id(product_listing_id, offer_id)
+        check_user_permissions(current_user, offer.sender.id)
+
         offer_id = self.offer_service.delete_offer_by_id(product_listing_id, offer_id)
         return {"id": offer_id}
 

@@ -74,7 +74,7 @@ class TestSuiteOfferCRUD:
             "/product-listings",
             json={
                 "id": "testID",
-                "seller": {"id": ValueStorageOfferCRUD.user_ids[0]},
+                "seller": {"id": ValueStorageOfferCRUD.user_ids[1]},
                 "listed_price": 319.99,
                 "product": {
                     "name": "Surface Pro 7",
@@ -92,7 +92,11 @@ class TestSuiteOfferCRUD:
     def test_create_offer(self):
         response = client.post(
             f"/product-listings/{ValueStorageOfferCRUD.product_listing_id}/offers",
-            json={"sender": {"id": "123"}, "recipient": {"id": "432"}, "price": 299.99},
+            json={
+                "sender": {"id": ValueStorageOfferCRUD.user_ids[1]},
+                "recipient": {"id": ValueStorageOfferCRUD.user_ids[0]},
+                "price": 299.99,
+            },
             headers={"Authorization": f"Bearer {ValueStorageOfferCRUD.access_token}"},
         )
         assert response.status_code == 201
@@ -114,8 +118,8 @@ class TestSuiteOfferCRUD:
         )
         assert response.status_code == 200
         assert response.json()["id"] == ValueStorageOfferCRUD.offer_id
-        assert response.json()["sender"]["id"] == "123"
-        assert response.json()["recipient"]["id"] == "432"
+        assert response.json()["sender"]["id"] == ValueStorageOfferCRUD.user_ids[1]
+        assert response.json()["recipient"]["id"] == ValueStorageOfferCRUD.user_ids[0]
         assert response.json()["price"] == 299.99
         assert response.json()["state"] == "PENDING"
 

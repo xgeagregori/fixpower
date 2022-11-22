@@ -75,7 +75,7 @@ class TestSuiteProductListingCRUD:
             "/product-listings",
             json={
                 "id": "testID",
-                "seller": {"id": ValueStorageProductListingCRUD.user_ids[0]},
+                "seller": {"id": ValueStorageProductListingCRUD.user_ids[1]},
                 "product": {
                     "name": "Surface Pro 7",
                     "brand": "Surface",
@@ -96,7 +96,7 @@ class TestSuiteProductListingCRUD:
         response = client.post(
             "/product-listings",
             json={
-                "seller": {"id": ValueStorageProductListingCRUD.user_ids[0]},
+                "seller": {"id": ValueStorageProductListingCRUD.user_ids[1]},
                 "product": {
                     "name": "Surface Pro 7",
                     "brand": "Surface",
@@ -118,7 +118,7 @@ class TestSuiteProductListingCRUD:
             "/product-listings",
             json={
                 "id": "testID",
-                "seller": {"id": ValueStorageProductListingCRUD.user_ids[0]},
+                "seller": {"id": ValueStorageProductListingCRUD.user_ids[1]},
                 "product": {
                     "name": "Surface Pro 7",
                     "brand": "Surface",
@@ -155,7 +155,7 @@ class TestSuiteProductListingCRUD:
         assert response.json()["id"] == "testID"
         assert (
             response.json()["seller"]["id"]
-            == ValueStorageProductListingCRUD.user_ids[0]
+            == ValueStorageProductListingCRUD.user_ids[1]
         )
         assert response.json()["product"]["name"] == "Surface Pro 7"
         assert response.json()["product"]["brand"] == "Surface"
