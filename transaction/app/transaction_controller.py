@@ -52,6 +52,7 @@ class TransactionController:
         current_user=Depends(get_current_user),
     ):
         """Create transaction."""
+        check_user_is_admin(current_user)
         transaction_id = self.transaction_service.create_transaction(transaction_create)
         if transaction_id is None:
             raise HTTPException(
@@ -84,6 +85,7 @@ class TransactionController:
         self=Depends(TransactionDep),
     ):
         """Get transaction by id."""
+        check_user_is_admin(current_user)
         transaction = self.transaction_service.get_transaction_by_id(transaction_id)
         transaction.product_listing = ProductListingOut(
             **transaction.product_listing.attribute_values
@@ -98,6 +100,7 @@ class TransactionController:
         self=Depends(TransactionDep),
     ):
         """Update transaction by id"""
+        check_user_is_admin(current_user)
         transaction = self.transaction_service.update_transaction_by_id(
             transaction_id, transaction_update
         )
@@ -113,6 +116,7 @@ class TransactionController:
         self=Depends(TransactionDep),
     ):
         """Delete transaction by id."""
+        check_user_is_admin(current_user)
         transaction_id = self.transaction_service.delete_transaction_by_id(
             transaction_id
         )

@@ -104,7 +104,8 @@ class TestSuiteTransactionCRUD:
                 "final_price": 319.99,
             },
             headers={
-                "Authorization": "Bearer " + ValueStorageTransactionCRUD.access_token
+                "Authorization": "Bearer "
+                + ValueStorageTransactionCRUD.access_token_admin
             },
         )
         assert response.status_code == 201
@@ -126,7 +127,8 @@ class TestSuiteTransactionCRUD:
         response = client.get(
             f"/transactions/{ValueStorageTransactionCRUD.transaction_id}",
             headers={
-                "Authorization": "Bearer " + ValueStorageTransactionCRUD.access_token
+                "Authorization": "Bearer "
+                + ValueStorageTransactionCRUD.access_token_admin
             },
         )
         assert response.status_code == 200
@@ -140,7 +142,8 @@ class TestSuiteTransactionCRUD:
         response = client.get(
             "/transactions/notFoundID",
             headers={
-                "Authorization": "Bearer " + ValueStorageTransactionCRUD.access_token
+                "Authorization": "Bearer "
+                + ValueStorageTransactionCRUD.access_token_admin
             },
         )
         assert response.status_code == 404
@@ -153,7 +156,8 @@ class TestSuiteTransactionCRUD:
                 "state": "SHIPPED",
             },
             headers={
-                "Authorization": "Bearer " + ValueStorageTransactionCRUD.access_token
+                "Authorization": "Bearer "
+                + ValueStorageTransactionCRUD.access_token_admin
             },
         )
         assert response.status_code == 200
@@ -167,7 +171,8 @@ class TestSuiteTransactionCRUD:
         response = client.delete(
             f"/transactions/{ValueStorageTransactionCRUD.transaction_id}",
             headers={
-                "Authorization": "Bearer " + ValueStorageTransactionCRUD.access_token
+                "Authorization": "Bearer "
+                + ValueStorageTransactionCRUD.access_token_admin
             },
         )
         assert response.status_code == 200
