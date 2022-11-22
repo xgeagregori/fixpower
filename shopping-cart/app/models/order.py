@@ -3,8 +3,10 @@ from pynamodb.attributes import (
     UnicodeAttribute,
     UTCDateTimeAttribute,
     NumberAttribute,
+    ListAttribute,
 )
 
+from app.models.product_listing import ProductListing
 from app.models.user import UserAttribute
 
 import datetime
@@ -18,7 +20,7 @@ class Order(Model):
         aws_secret_access_key = os.getenv("AWS_SECRET_ACCESS_KEY_LAMBDA")
 
     id = UnicodeAttribute(hash_key=True)
-    # items= ListAttribute(of=ProductListing, default=[])
+    items = ListAttribute(of=ProductListing, default=[])
     user = UserAttribute()
     price = NumberAttribute()
     created_at = UTCDateTimeAttribute(default=datetime.datetime.now())

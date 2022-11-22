@@ -18,5 +18,6 @@ class OrderUpdate(BaseModel):
 class OrderOut(BaseModel):
     id: str
     user: UserOut
+    items: list
     price: float
     created_at: datetime
