@@ -57,6 +57,8 @@ class ShoppingCartController:
         self=Depends(OrderDep),
     ):
         """Create order"""
+        check_user_permissions(current_user, order_create.user.id)
+
         order_id = self.order_service.create_order(order_create)
         if order_id is None:
             raise HTTPException(
@@ -68,6 +70,8 @@ class ShoppingCartController:
     @app.get("/shopping-carts", tags=["shopping-carts"])
     def get_orders(current_user=Depends(get_current_user), self=Depends(OrderDep)):
         """Get orders"""
+        check_user_is_admin(current_user)
+
         orders = self.order_service.get_orders()
 
         formatted_orders = []
@@ -85,6 +89,7 @@ class ShoppingCartController:
     ):
         """Get Order by id"""
         order = self.order_service.get_order_by_id(order_id)
+        check_user_permissions(current_user, order.user.id)
 
         order.items = [ItemOut(**item.attribute_values) for item in order.items]
         order.user = UserOut(**order.user.attribute_values)
@@ -100,6 +105,7 @@ class ShoppingCartController:
     ):
         """Update order by id"""
         order = self.order_service.update_order_by_id(order_id, order_update)
+        check_user_permissions(current_user, order.user.id)
 
         order.items = [ItemOut(**item.attribute_values) for item in order.items]
         order.user = UserOut(**order.user.attribute_values)
@@ -111,6 +117,9 @@ class ShoppingCartController:
         order_id: str, current_user=Depends(get_current_user), self=Depends(OrderDep)
     ):
         """Delete order by id"""
+        order = self.order_service.get_order_by_id(order_id)
+        check_user_permissions(current_user, order.user.id)
+
         order_id = self.order_service.delete_order_by_id(order_id)
 
         return {"id": order_id}
@@ -128,6 +137,9 @@ class ShoppingCartController:
         self=Depends(OrderDep),
     ):
         """Create item for order"""
+        order = self.order_service.get_order_by_id(order_id)
+        check_user_permissions(current_user, order.user.id)
+
         item_id = self.item_service.create_item(order_id, item_create)
         return {"id": item_id}
 
@@ -138,6 +150,9 @@ class ShoppingCartController:
         self=Depends(OrderDep),
     ):
         """Get items for order"""
+        order = self.order_service.get_order_by_id(order_id)
+        check_user_permissions(current_user, order.user.id)
+
         items = self.item_service.get_items_by_order_id(order_id)
         return [ItemOut(**item.attribute_values) for item in items]
 
@@ -149,6 +164,9 @@ class ShoppingCartController:
         self=Depends(OrderDep),
     ):
         """Delete item by id for order"""
+        order = self.order_service.get_order_by_id(order_id)
+        check_user_permissions(current_user, order.user.id)
+
         item_id = self.item_service.delete_item_by_id(order_id, item_id)
         return {"id": item_id}
 
