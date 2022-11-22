@@ -12,6 +12,7 @@ from app.dependencies.auth import (
     check_user_is_admin,
 )
 from app.dependencies.order import OrderDep
+from app.schemas.item import ItemCreate, ItemOut
 from app.schemas.order import OrderCreate, OrderUpdate, OrderOut
 from app.schemas.user import UserOut
 
@@ -31,6 +32,7 @@ router = InferringRouter()
 
 @cbv(router)
 class ShoppingCartController:
+    # Shopping Cart routes
     @app.post("/login", tags=["auth"])
     def login(form_data: OAuth2PasswordRequestForm = Depends()):
         token_response = requests.post(
@@ -70,7 +72,7 @@ class ShoppingCartController:
 
         formatted_orders = []
         for order in orders:
-
+            order.items = [ItemOut(**item.attribute_values) for item in order.items]
             order.user = UserOut(**order.user.attribute_values)
             formatted_order = OrderOut(**order.attribute_values)
             formatted_orders.append(formatted_order)
@@ -83,6 +85,8 @@ class ShoppingCartController:
     ):
         """Get Order by id"""
         order = self.order_service.get_order_by_id(order_id)
+
+        order.items = [ItemOut(**item.attribute_values) for item in order.items]
         order.user = UserOut(**order.user.attribute_values)
         formatted_order = OrderOut(**order.attribute_values)
         return formatted_order
@@ -97,6 +101,7 @@ class ShoppingCartController:
         """Update order by id"""
         order = self.order_service.update_order_by_id(order_id, order_update)
 
+        order.items = [ItemOut(**item.attribute_values) for item in order.items]
         order.user = UserOut(**order.user.attribute_values)
         formatted_order = OrderOut(**order.attribute_values)
         return formatted_order
@@ -109,6 +114,43 @@ class ShoppingCartController:
         order_id = self.order_service.delete_order_by_id(order_id)
 
         return {"id": order_id}
+
+    # Item routes
+    @app.post(
+        "/shopping-carts/{order_id}/items",
+        status_code=status.HTTP_201_CREATED,
+        tags=["items"],
+    )
+    def create_item(
+        order_id: str,
+        item_create: ItemCreate,
+        current_user=Depends(get_current_user),
+        self=Depends(OrderDep),
+    ):
+        """Create item for order"""
+        item_id = self.item_service.create_item(order_id, item_create)
+        return {"id": item_id}
+
+    @app.get("/shopping-carts/{order_id}/items", tags=["items"])
+    def get_items_by_order_id(
+        order_id: str,
+        current_user=Depends(get_current_user),
+        self=Depends(OrderDep),
+    ):
+        """Get items for order"""
+        items = self.item_service.get_items_by_order_id(order_id)
+        return [ItemOut(**item.attribute_values) for item in items]
+
+    @app.delete("/shopping-carts/{order_id}/items/{item_id}", tags=["items"])
+    def delete_item_by_id(
+        order_id: str,
+        item_id: str,
+        current_user=Depends(get_current_user),
+        self=Depends(OrderDep),
+    ):
+        """Delete item by id for order"""
+        item_id = self.item_service.delete_item_by_id(order_id, item_id)
+        return {"id": item_id}
 
 
 app.include_router(router)
